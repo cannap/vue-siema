@@ -43,12 +43,12 @@ This project is based on https://github.com/pawelgrzybek/siema
        return {
          sliderIndex: 2,
          slides: [ //⚠️️ Warning: vue-siema uses internal v-html be sure to sanitize!
-           '<img src="https://unsplash.it/600/350?image=10" alt= "slide" />',
-           '<img src="https://unsplash.it/600/350?image=12" alt= "slide" />',
-           '<img src="https://unsplash.it/600/350?image=13" alt= "slide" />',
-           '<img src="https://unsplash.it/600/350?image=14" alt= "slide" />',
-           '<img src="https://unsplash.it/600/350?image=15" alt= "slide" />',
-           '<img src="https://unsplash.it/600/350?image=16" alt= "slide" />',
+           '<img src="https://unsplash.it/600/350?image=10" alt="slide">',
+           '<img src="https://unsplash.it/600/350?image=12" alt="slide">',
+           '<img src="https://unsplash.it/600/350?image=13" alt="slide">',
+           '<img src="https://unsplash.it/600/350?image=14" alt="slide">',
+           '<img src="https://unsplash.it/600/350?image=15" alt="slide">',
+           '<img src="https://unsplash.it/600/350?image=16" alt="slide">',
          ]
        }
      },

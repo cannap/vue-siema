@@ -19,7 +19,6 @@
             return {
                 slides: [
                     '<img src="https://unsplash.it/600/350?image=10" alt= "slide" />',
-                    '<img src="https://unsplash.it/600/350?image=11" alt= "slide" />',
                     '<img src="https://unsplash.it/600/350?image=12" alt= "slide" />',
                     '<img src="https://unsplash.it/600/350?image=13" alt= "slide" />',
                     '<img src="https://unsplash.it/600/350?image=14" alt= "slide" />',

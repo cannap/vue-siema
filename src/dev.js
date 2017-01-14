@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import Main from './main'
+import Demo from './demo'
 
 new Vue({ // eslint-disable-line
   el: '#app',
-  ...Main
+  ...Demo
 })

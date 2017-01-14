@@ -1,10 +1,12 @@
 
-import Main from './main'
+import Siema from './main'
+import SiemaSlide from './siema-slide'
 
 if (typeof window !== 'undefined') {
-  window.Main = Main
+  window.Siema = Siema
 }
 
 export {
-  Main
+  Siema,
+  SiemaSlide
 }

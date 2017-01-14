@@ -1,14 +1,13 @@
 {
   "name": "vue-siema",
   "version": "0.3.4",
-  "description": "A Vue.js 2.0 Component",
-  "author": "cannap <sh4fty@gmail.com>",
-  "private": false,
+  "description": "Lightweight and simple carousel for Vue 2.0",
+  "author": "Marko Bolliger  <marko@renka.de> (https://renka.de)",
   "main": "src/index.js",
   "scripts": {
     "build": "webpack -p --config build/webpack.prod.conf.js",
     "dev": "webpack-dev-server --inline --hot --config build/webpack.dev.conf.js",
-    "gh":"cd example && npm run build && cd .. && node build/gh-page.js"
+    "gh": "cd example && npm run build && cd .. && node build/gh-page.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +16,12 @@
   "dependencies": {
     "vue": "^2.0.1"
   },
+  "keywords": [
+    "vue",
+    "slider",
+    "carousel",
+    "lightweight"
+  ],
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
@@ -35,8 +40,5 @@
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.2",
     "webpack-merge": "^0.14.1"
-  },
-  "engines": {
-    "node": ">= 4.0.0"
   }
 }

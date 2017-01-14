@@ -1,11 +1,4 @@
 .DS_Store
 node_modules/
 npm-debug.log
-builder
-config
-.babelrc
-.editorconfig
-package.json
-yarn.lock
-src
-build
+

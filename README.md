@@ -1,10 +1,10 @@
 
 ##WIP !!
 
-vue-siema - Lightweight and simple carousel for Vue
+vue-siema - Lightweight and simple carousel for Vue <br>
 This project is based on https://github.com/pawelgrzybek/siema
 
-
+⚠️️**Warning:** vue-siema uses internal v-html be sure to sanitize **only use on trusted content!
 
 
 ##Install 
@@ -21,7 +21,7 @@ This project is based on https://github.com/pawelgrzybek/siema
 | draggable  | Boolean | true       | false    |
 | threshold  | Number  | 20         | false    |
 | loop       | Boolean | true       | false    |
-|            |         |            |          |
+
 
 
 
@@ -42,7 +42,7 @@ This project is based on https://github.com/pawelgrzybek/siema
      data() {
        return {
          sliderIndex: 2,
-         slides: [
+         slides: [ //⚠️️ Warning: vue-siema uses internal v-html be sure to sanitize!
            '<img src="https://unsplash.it/600/350?image=10" alt= "slide" />',
            '<img src="https://unsplash.it/600/350?image=12" alt= "slide" />',
            '<img src="https://unsplash.it/600/350?image=13" alt= "slide" />',

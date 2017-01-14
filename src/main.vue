@@ -3,9 +3,7 @@
 
     <div class="inner-siema" ref="sliderFrame" :style="styleObject">
       <slot></slot>
-
     </div>
-
   </div>
 </template>
 
@@ -72,13 +70,11 @@
       this.width = siemaWidth
 
       //Todo: Do it more the Vue way
-
       for (let i = 0; i < this.$children.length; i++) {
         this.$children[i].$el.style.float = 'left'
         this.$children[i].$el.style.cssFloat = 'left'
         this.$children[i].$el.style.width = `${100 / this.$children.length}%`;
       }
-
 
       if (this.draggable) {
         this.pointerDown = false
@@ -95,17 +91,9 @@
           end: 0,
         };
       },
-
-      resolveSlidesNumber() {
-
-      },
-
-
       //TouchHandlers 
       touchstartHandler() { },
-
       touchendHandler() { },
-
       touchmoveHandler() { },
 
       //MouseHandler 
@@ -115,7 +103,6 @@
         e.stopPropagation()
         this.pointerDown = true
         this.drag.start = e.pageX
-        //Fin
       },
       mouseupHandler(e) {
         e.stopPropagation()
@@ -133,18 +120,14 @@
       mousemoveHandler(e) {
         e.preventDefault()
         if (this.pointerDown) {
-
           this.drag.end = e.pageX
           this.styleObject.cursor = '-webkit-grabbing';
-
           this.styleObject.transition = `all 0ms ${this.easing}`;
           this.styleObject.transform = `translate3d(${(this.currentSlide * (this.width / this.perPage) + (this.drag.start - this.drag.end)) * -1}px, 0, 0)`
-
         }
       },
 
       mouseleaveHandler(e) {
-
         if (this.pointerDown) {
           this.pointerDown = false;
           this.styleObject.cursor = '-webkit-grab';
@@ -157,12 +140,8 @@
 
       },
 
-
-
       updateAfterDrag() {
-
         const movement = this.drag.end - this.drag.start
-
         if (movement > 0 && Math.abs(movement) > this.threshold) {
           this.prev()
         } else if (movement < 0 && Math.abs(movement) > this.threshold) {
@@ -173,14 +152,12 @@
       },
 
       next() {
-
         if (this.currentSlide === this.$children.length - this.perPage && this.loop) {
           this.currentSlide = 0;
         } else {
           this.currentSlide = Math.min(this.currentSlide + 1, this.$children.length - this.perPage);
         }
         this.slideToCurrent();
-
       },
 
       prev() {
@@ -191,29 +168,11 @@
           this.currentSlide = Math.max(this.currentSlide - 1, 0);
         }
         this.slideToCurrent();
-
       },
 
       slideToCurrent() {
-
         this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`;
-
       },
-
-
-
-
-
-      //most of this functions are called from parent
-      addSlide() {
-        //This will a new Slide to slider an recalculate
-      },
-
-      destroySlide() {
-        //this will remove a slide and recalculate
-      }
-
-
     },
 
   }

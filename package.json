@@ -31,13 +31,15 @@
     "babel-register": "^6.0.0",
     "babel-runtime": "^6.0.0",
     "css-loader": "^0.25.0",
+    "eslint-plugin-vue": "^1.0.0",
+    "eslint-plugin-vuefix": "^0.1.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "function-bind": "^1.0.2",
     "gh-pages": "^0.12.0",
     "html-webpack-plugin": "^2.8.1",
     "vue-loader": "^9.4.0",
     "vue-style-loader": "^1.0.0",
-    "webpack": "^1.13.2",
+    "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2",
     "webpack-merge": "^0.14.1"
   }

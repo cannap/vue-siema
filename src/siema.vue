@@ -3,7 +3,10 @@
          @mouseleave="mouseleaveHandler"
          @mouseup="mouseupHandler"
          @mousedown="mousedownHandler"
-         @mousemove="mousemoveHandler">
+         @mousemove="mousemoveHandler"
+         @touchstart="touchstartHandler"
+         @touchend="touchendHandler"
+         @touchmove="touchmoveHandler">
         <div class="inner-siema" :style="styleObject">
             <div class="siema-slide" v-for="slide in slides" v-html="slide" :style="slideStyle"></div>
         </div>
@@ -55,7 +58,7 @@
       },
       draggable: {
         type: Boolean,
-        default: true
+        default: false
       },
       direction: {
         type: String,
@@ -88,7 +91,6 @@
 
     mounted () {
       // Todo: Debounce
-      window.addEventListener('resize', this.resize)
 
       if (this.draggable) {
         this.pointerDown = false
@@ -97,6 +99,8 @@
       }
       // Fire
       this.init()
+      window.addEventListener('resize', this.resize)
+
     },
 
     methods: {
@@ -149,8 +153,10 @@
       },
 
       resize () {
-        this.styleObject.width = `${(this.$refs.wrap.getBoundingClientRect().width / this.perPage) * this.slides.length}px`
-        console.log(this.styleObject.width)
+        var siemaWidth = this.$refs.wrap.getBoundingClientRect().width
+        this.styleObject.width = `${(siemaWidth / this.perPage) * this.slides.length}px`
+        this.width = siemaWidth
+        this.slideToCurrent()
       },
 
       // Public
@@ -161,7 +167,7 @@
       }
     },
 
-    beforeDestroy () {
+    beforeDestroy() {
       window.removeEventListener('resize', this.resize)
     },
 

@@ -4,7 +4,7 @@
 vue-siema - Lightweight and simple carousel for Vue <br>
 This project is based on https://github.com/pawelgrzybek/siema
 
-⚠️️**Warning:** vue-siema uses internal v-html be sure to sanitize **only use on trusted content!
+⚠️️**Warning:** vue-siema uses internal v-html be sure to sanitize **only use on trusted content!**
 
 
 ##Install 

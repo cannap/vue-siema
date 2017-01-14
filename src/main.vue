@@ -2,7 +2,7 @@
   <div id="app" class="siema" ref="wrap" @mouseleave="mouseleaveHandler" @mouseup="mouseupHandler" @mousedown="mousedownHandler"
     @mousemove="mousemoveHandler">
 
-    <div class="inner-siema" ref="sliderFrame" :style="styleObject">
+    <div class="inner-siema"  :style="styleObject">
       <slot></slot>
     </div>
   </div>

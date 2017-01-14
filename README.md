@@ -61,6 +61,7 @@ This project is based on https://github.com/pawelgrzybek/siema
 ```
 
 ##Todo:
+- [ ] Touch Stuff
 - [ ] Dynamically adding/remove Slides
 - [ ] Events
 - [ ] Pagination(example)

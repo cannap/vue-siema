@@ -1,23 +1,18 @@
 <template>
     <div id="app" class="component">
-        <Siema ref="slider">
-            <SiemaSlide v-for="slide in slides" v-html="slide"></SiemaSlide>
+        <Siema ref="slider" :slides="slides">
+
         </Siema>
 
-        <input v-model="sliderIndex" type="text">
-
-        <button type="button" @click="goTo">Go To</button>
     </div>
 </template>
 
 <script>
-    import Siema from './main.vue'
-    import SiemaSlide from './siema-slide'
+    import Siema from './siema.vue'
     export default {
         name: 'app',
         components: {
             Siema,
-            SiemaSlide
         },
         data() {
             return {

@@ -7,10 +7,8 @@
 
 <script>
   import Siema from 'vue-siema'
-
   export default {
     name: 'hello',
-
     data() {
       return {
         sliderIndex: 2,
@@ -32,7 +30,6 @@
 
 <style>
     body {
-
         width: 100%;
         max-width: 600px;
         margin: 0 auto;

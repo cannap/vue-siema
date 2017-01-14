@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="siema" ref="wrap" @mouseup="mouseupHandler" @mousedown="mousedownHandler" @mousemove="mousemoveHandler">
+  <div id="app" class="siema" ref="wrap" @mouseleave="mouseleaveHandler" @mouseup="mouseupHandler" @mousedown="mousedownHandler" @mousemove="mousemoveHandler">
 
     <div class="inner-siema" ref="sliderFrame" :style="styleObject">
       <slot></slot>

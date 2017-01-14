@@ -1,5 +1,6 @@
 <template>
-  <div id="app" class="siema" ref="wrap" @mouseleave="mouseleaveHandler" @mouseup="mouseupHandler" @mousedown="mousedownHandler" @mousemove="mousemoveHandler">
+  <div id="app" class="siema" ref="wrap" @mouseleave="mouseleaveHandler" @mouseup="mouseupHandler" @mousedown="mousedownHandler"
+    @mousemove="mousemoveHandler">
 
     <div class="inner-siema" ref="sliderFrame" :style="styleObject">
       <slot></slot>
@@ -59,6 +60,11 @@
     },
 
     mounted() {
+
+
+      window.addEventListener('resize', this.resize)
+
+
       const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
       this.styleObject = Object.assign({}, this.styleObject, {
         width: `${(siemaWidth / this.perPage) * this.$children.length}px`, //The Container width 
@@ -173,7 +179,20 @@
       slideToCurrent() {
         this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`;
       },
+
+
+      resize() {
+        this.styleObject.width = `${(this.$refs.wrap.getBoundingClientRect().width / this.perPage) * this.innerElements.length}px`;
+
+      }
+
     },
+
+    dbeforeDestroy() {
+      window.removeEventListener('resize', this.resize)
+    }
+
+
 
   }
 </script>

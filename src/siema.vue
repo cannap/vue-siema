@@ -14,9 +14,9 @@
 </template>
 
 <script>
-
+  import MouseHandlers from './mixins/mousehandler'
   export default {
-   mixins: [MouseHandlers],
+    mixins: [MouseHandlers],
     name: 'siema-slider',
     computed: {
       slideStyle () {
@@ -163,7 +163,6 @@
         this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1)
         this.slideToCurrent()
       },
-
 
       touchstartHandler (e) {
         e.stopPropagation()

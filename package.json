@@ -1,6 +1,6 @@
 {
   "name": "vue-siema",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Lightweight and simple carousel for Vue 2.0",
   "author": "Marko Bolliger  <marko@renka.de> (https://renka.de)",
   "main": "src/index.js",

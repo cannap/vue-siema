@@ -60,10 +60,7 @@
     },
 
     mounted() {
-
-
       window.addEventListener('resize', this.resize)
-
 
       const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
       this.styleObject = Object.assign({}, this.styleObject, {
@@ -75,11 +72,11 @@
 
       this.width = siemaWidth
 
-      //Todo: Do it more the Vue way
+      //Todo: Do it the Vue way!!!
       for (let i = 0; i < this.$children.length; i++) {
         this.$children[i].$el.style.float = 'left'
         this.$children[i].$el.style.cssFloat = 'left'
-        this.$children[i].$el.style.width = `${100 / this.$children.length}%`;
+        this.$children[i].$el.style.width = `${100 / this.$children.length}%`
       }
 
       if (this.draggable) {
@@ -180,20 +177,24 @@
         this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`;
       },
 
-
       resize() {
         this.styleObject.width = `${(this.$refs.wrap.getBoundingClientRect().width / this.perPage) * this.innerElements.length}px`;
+      },
 
+      //Public 
+
+      goTo(index) {
+        this.currentSlide = Math.min(Math.max(index, 0), this.$children.length - 1);
+        this.slideToCurrent();
       }
 
+
     },
+
 
     dbeforeDestroy() {
       window.removeEventListener('resize', this.resize)
     }
-
-
-
   }
 </script>
 

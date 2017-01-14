@@ -1,5 +1,5 @@
 
-##WIP !!
+##WIP !!!
 
 vue-siema - Lightweight and simple carousel for Vue <br>
 This project is based on https://github.com/pawelgrzybek/siema

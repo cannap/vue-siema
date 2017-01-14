@@ -13,10 +13,10 @@
     </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 
   export default {
-   // mixins: [MouseHandlers, TouchHandlers],
+   mixins: [MouseHandlers],
     name: 'siema-slider',
     computed: {
       slideStyle () {
@@ -164,43 +164,7 @@
         this.slideToCurrent()
       },
 
-      mousedownHandler: function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        this.pointerDown = true
-        this.drag.start = e.pageX
-      },
-      mouseupHandler (e) {
-        e.stopPropagation()
-        this.pointerDown = false
-        this.styleObject.cursor = '-webkit-grab'
-        this.styleObject.transition = `all ${this.duration}ms ${this.easing}`
-        if (this.drag.end) {
-          this.updateAfterDrag()
-        }
 
-        this.clearDrag()
-      },
-      mousemoveHandler (e) {
-        e.preventDefault()
-        if (this.pointerDown) {
-          this.drag.end = e.pageX
-          this.styleObject.cursor = '-webkit-grabbing'
-          this.styleObject.transition = `all 0ms ${this.easing}`
-          this.styleObject.transform = `translate3d(${(this.currentSlide * (this.width / this.perPage) + (this.drag.start - this.drag.end)) * -1}px, 0, 0)`
-        }
-      },
-      mouseleaveHandler (e) {
-        if (this.pointerDown) {
-          this.pointerDown = false
-          this.styleObject.cursor = '-webkit-grab'
-          this.drag.end = e.pageX
-          this.styleObject.transition = `all ${this.duration}ms ${this.easing}`
-          this.styleObject.webkitTransition = `all ${this.duration}ms ${this.easing}`
-          this.updateAfterDrag()
-          this.clearDrag()
-        }
-      },
       touchstartHandler (e) {
         e.stopPropagation()
         this.pointerDown = true
@@ -237,11 +201,8 @@
           currentSlide: newVal + 1,
           isFirst: newVal === 0,
           isLast: newVal + 1 === this.slides.length
-
         }
 
-        console.log('newVal', newVal)
-        console.log('slideslength', this.slides.length)
         this.$emit('slideChange', callbackValues)
       },
       // Reinit the slider after new slides comes in

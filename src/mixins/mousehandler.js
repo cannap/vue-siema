@@ -40,4 +40,4 @@ var mouseHandlers = {
     }
   }
 }
-export default mouseHandlers
+exports.default = mouseHandlers

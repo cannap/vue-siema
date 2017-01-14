@@ -7,7 +7,7 @@ var mouseHandlers = {
       this.pointerDown = true
       this.drag.start = e.pageX
     },
-    mouseupHandler (e) {
+    mouseupHandler: function (e) {
       e.stopPropagation()
       this.pointerDown = false
       this.styleObject.cursor = '-webkit-grab'
@@ -18,7 +18,7 @@ var mouseHandlers = {
 
       this.clearDrag()
     },
-    mousemoveHandler (e) {
+    mousemoveHandler: function (e) {
       e.preventDefault()
       if (this.pointerDown) {
         this.drag.end = e.pageX
@@ -27,7 +27,7 @@ var mouseHandlers = {
         this.styleObject.transform = `translate3d(${(this.currentSlide * (this.width / this.perPage) + (this.drag.start - this.drag.end)) * -1}px, 0, 0)`
       }
     },
-    mouseleaveHandler (e) {
+    mouseleaveHandler: function (e) {
       if (this.pointerDown) {
         this.pointerDown = false
         this.styleObject.cursor = '-webkit-grab'

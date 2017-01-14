@@ -1,7 +1,6 @@
 <template>
     <div class="siema-slide">
-    
-        <slot></slot>
+
     </div>
 </template>
 

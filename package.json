@@ -1,9 +1,10 @@
 {
   "name": "vue-siema",
-  "version": "0.0.0",
+  "version": "0.3.0",
   "description": "A Vue.js 2.0 Component",
   "author": "cannap <sh4fty@gmail.com>",
-  "private": true,
+  "private": false,
+  "main": "src/index.js",
   "scripts": {
     "build": "webpack -p --config build/webpack.prod.conf.js",
     "dev": "webpack-dev-server --inline --hot --config build/webpack.dev.conf.js"

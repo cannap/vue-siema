@@ -1,13 +1,7 @@
-
-import Siema from './main'
-import SiemaSlide from './siema-slide'
+var Siema = require('./siema.vue')
 
 if (typeof window !== 'undefined') {
   window.Siema = Siema
-  window.SiemanSlide = SiemaSlide
 }
 
-export {
-  Siema,
-  SiemaSlide
-}
+module.exports = Siema

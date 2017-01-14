@@ -1,8 +1,9 @@
+example
 .DS_Store
 node_modules/
 dist/
 npm-debug.log
-.idea
+
 # Created by https://www.gitignore.io/api/visualstudiocode,webstorm
 
 ### VisualStudioCode ###

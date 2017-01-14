@@ -1,22 +1,35 @@
 <template>
-  <div id="app" class="siema" ref="wrap" @mouseleave="mouseleaveHandler" @mouseup="mouseupHandler" @mousedown="mousedownHandler"
-    @mousemove="mousemoveHandler">
-
-    <div class="inner-siema"  :style="styleObject">
-      <slot></slot>
+    <div class="siema" ref="wrap"
+         @mouseleave="mouseleaveHandler"
+         @mouseup="mouseupHandler"
+         @mousedown="mousedownHandler"
+         @mousemove="mousemoveHandler">
+        <div class="inner-siema" :style="styleObject">
+            <div class="siema-slide" v-for="slide in slides" v-html="slide" :style="slideStyle"></div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
-
+  import SiemaSlide from './siema-slide'
   export default {
-    name: 'siema',
+    name: 'siema-slider',
+    computed: {
+      slideStyle() {
+        return {
+          float: 'left',
+          cssFloat: 'left',
+          width: `${100 / this.slides.length}%`
+        }
+      }
+    },
+
     props: {
       duration: {
         type: Number,
         default: 200
       },
+      slides: Array,
       easing: {
         type: String,
         default: 'ease-out'
@@ -41,10 +54,10 @@
         type: Boolean,
         default: true
       }
-
     },
 
-    data() {
+    data()
+    {
       return {
         styleObject: {
           transform: 'none'
@@ -59,25 +72,22 @@
       }
     },
 
-    mounted() {
+    mounted()
+    {
+
+      //Todo: Debounce
       window.addEventListener('resize', this.resize)
 
       const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
+
       this.styleObject = Object.assign({}, this.styleObject, {
-        width: `${(siemaWidth / this.perPage) * this.$children.length}px`, //The Container width 
+        width: `${(siemaWidth / this.perPage) * this.slides.length}px`, //The Container width
         transition: `all ${this.duration}ms ${this.easing}`,
         webkitTransition: `all ${this.duration}ms ${this.easing}`,
         cursor: '-webkit-grab'
       })
 
       this.width = siemaWidth
-
-      //Todo: Do it the Vue way!!!
-      for (let i = 0; i < this.$children.length; i++) {
-        this.$children[i].$el.style.float = 'left'
-        this.$children[i].$el.style.cssFloat = 'left'
-        this.$children[i].$el.style.width = `${100 / this.$children.length}%`
-      }
 
       if (this.draggable) {
         this.pointerDown = false
@@ -88,26 +98,32 @@
     },
 
     methods: {
-      clearDrag() {
+      clearDrag()
+      {
         this.drag = {
           start: 0,
           end: 0,
         };
       },
-      //TouchHandlers 
-      touchstartHandler() { },
-      touchendHandler() { },
-      touchmoveHandler() { },
+      //TouchHandlers
+      touchstartHandler()
+      { },
+      touchendHandler()
+      { },
+      touchmoveHandler()
+      { },
 
-      //MouseHandler 
+      //MouseHandler
 
-      mousedownHandler(e) {
+      mousedownHandler(e)
+      {
         e.preventDefault()
         e.stopPropagation()
         this.pointerDown = true
         this.drag.start = e.pageX
       },
-      mouseupHandler(e) {
+      mouseupHandler(e)
+      {
         e.stopPropagation()
         this.pointerDown = false
         this.styleObject.cursor = '-webkit-grab';
@@ -120,7 +136,8 @@
 
       },
 
-      mousemoveHandler(e) {
+      mousemoveHandler(e)
+      {
         e.preventDefault()
         if (this.pointerDown) {
           this.drag.end = e.pageX
@@ -130,7 +147,8 @@
         }
       },
 
-      mouseleaveHandler(e) {
+      mouseleaveHandler(e)
+      {
         if (this.pointerDown) {
           this.pointerDown = false;
           this.styleObject.cursor = '-webkit-grab';
@@ -143,7 +161,8 @@
 
       },
 
-      updateAfterDrag() {
+      updateAfterDrag()
+      {
         const movement = this.drag.end - this.drag.start
         if (movement > 0 && Math.abs(movement) > this.threshold) {
           this.prev()
@@ -154,18 +173,20 @@
 
       },
 
-      next() {
-        if (this.currentSlide === this.$children.length - this.perPage && this.loop) {
+      next()
+      {
+        if (this.currentSlide === this.slides.length - this.perPage && this.loop) {
           this.currentSlide = 0;
         } else {
-          this.currentSlide = Math.min(this.currentSlide + 1, this.$children.length - this.perPage);
+          this.currentSlide = Math.min(this.currentSlide + 1, this.slides.length - this.perPage);
         }
         this.slideToCurrent();
       },
 
-      prev() {
+      prev()
+      {
         if (this.currentSlide === 0 && this.loop) {
-          this.currentSlide = this.$children.length - this.perPage;
+          this.currentSlide = this.slides.length - this.perPage;
         }
         else {
           this.currentSlide = Math.max(this.currentSlide - 1, 0);
@@ -173,39 +194,46 @@
         this.slideToCurrent();
       },
 
-      slideToCurrent() {
+      slideToCurrent()
+      {
         this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`;
       },
 
-      resize() {
+      resize()
+      {
         this.styleObject.width = `${(this.$refs.wrap.getBoundingClientRect().width / this.perPage) * this.innerElements.length}px`;
-      },
+      }
+      ,
 
-      //Public 
+      //Public
 
-      goTo(index) {
-        this.currentSlide = Math.min(Math.max(index, 0), this.$children.length - 1);
+      goTo(index)
+      {
+        this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1);
         this.slideToCurrent();
       }
-
-
     },
 
-
-    dbeforeDestroy() {
+    dbeforeDestroy()
+    {
       window.removeEventListener('resize', this.resize)
+    }
+    ,
+    components: {
+      SiemaSlide,
     }
   }
 </script>
 
 <style>
 
-.siema {
-  overflow:hidden; 
-  width:600px;
-  margin:0 auto;
-}
-.siema-slide {
-  float:left;
-}
+    .siema {
+        overflow: hidden;
+        width: 600px;
+        margin: 0 auto;
+    }
+
+    .siema-slide {
+        float: left;
+    }
 </style>

@@ -6,6 +6,7 @@ This project is based on https://github.com/pawelgrzybek/siema
 
 ⚠️️**Warning:** vue-siema uses internal v-html be sure to sanitize **only use on trusted content!**
 
+🚀🚀🚀Example: https://cannap.github.io/vue-siema/
 
 ##Install 
 ```npm install --save vue-siema```

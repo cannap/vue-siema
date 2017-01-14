@@ -78,26 +78,32 @@
       //Todo: Debounce
       window.addEventListener('resize', this.resize)
 
-      const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
-
-      this.styleObject = Object.assign({}, this.styleObject, {
-        width: `${(siemaWidth / this.perPage) * this.slides.length}px`, //The Container width
-        transition: `all ${this.duration}ms ${this.easing}`,
-        webkitTransition: `all ${this.duration}ms ${this.easing}`,
-        cursor: '-webkit-grab'
-      })
-
-      this.width = siemaWidth
-
       if (this.draggable) {
         this.pointerDown = false
         this.drag.start = 0
         this.drag.end = 0
       }
+      //Fire
+      this.init();
 
     },
 
     methods: {
+
+      init() {
+
+        const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
+
+        this.styleObject = Object.assign({}, this.styleObject, {
+          width: `${(siemaWidth / this.perPage) * this.slides.length}px`, //The Container width
+          transition: `all ${this.duration}ms ${this.easing}`,
+          webkitTransition: `all ${this.duration}ms ${this.easing}`,
+          cursor: '-webkit-grab'
+        })
+
+        this.width = siemaWidth
+
+      },
       clearDrag()
       {
         this.drag = {
@@ -202,8 +208,7 @@
       resize()
       {
         this.styleObject.width = `${(this.$refs.wrap.getBoundingClientRect().width / this.perPage) * this.innerElements.length}px`;
-      }
-      ,
+      },
 
       //Public
 
@@ -214,11 +219,10 @@
       }
     },
 
-    dbeforeDestroy()
+    beforeDestroy()
     {
       window.removeEventListener('resize', this.resize)
-    }
-    ,
+    },
     components: {
       SiemaSlide,
     }

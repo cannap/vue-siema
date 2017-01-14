@@ -1,5 +1,4 @@
 var mouseHandlers = {
-
   methods: {
     mousedownHandler: function (e) {
       e.preventDefault()
@@ -40,4 +39,4 @@ var mouseHandlers = {
     }
   }
 }
-export default  mouseHandlers
+export default mouseHandlers

@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Vue.js project",
   "author": "cannap <sh4fty@gmail.com>",
   "private": true,
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "vue": "^2.1.0",
-    "vue-siema": "0.0.0"
+    "vue-siema": "0.3.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",

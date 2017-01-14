@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="siema" ref="wrap">
 
-    <div class="inner-siema" :style="styleObject">
+    <div class="inner-siema" ref="sliderFrame" :style="styleObject">
       <slot></slot>
 
     </div>
@@ -47,24 +47,29 @@
 
     data() {
       return {
-        styleObject: {}
+        styleObject: {},
+        currentSlide: 0
       }
     },
 
     mounted() {
-      const docFragment = document.createDocumentFragment();
-      for (let i = 0; i < this.$children.length; i++) {
-        this.$children[i].$el.style.float = 'left'
-        this.$children[i].$el.style.cssFloat = 'left'
-        this.$children[i].$el.style.width = `${100 / this.$children.length}%`;
-
-      }
 
       const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
       this.styleObject = Object.assign({}, this.styleObject, {
         width: `${(siemaWidth / this.perPage) * this.$children.length}px`, //The Container width 
         transition: `all ${this.duration}ms ${this.easing}`,
       })
+
+      //Todo: Do it more the Vue way
+
+      for (let i = 0; i < this.$children.length; i++) {
+        this.$children[i].$el.style.float = 'left'
+        this.$children[i].$el.style.cssFloat = 'left'
+        this.$children[i].$el.style.width = `${100 / this.$children.length}%`;
+      }
+
+
+
 
 
     },

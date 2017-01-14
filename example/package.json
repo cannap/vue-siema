@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "vue": "^2.1.0",
-    "vue-siema": "^0.3.11"
+    "vue-siema": "^0.3.12"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",

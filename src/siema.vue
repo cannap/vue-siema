@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import MouseHandlers from './mixins/mousehandler'
+  import MouseHandlers from './mixins/mousehandler.js'
   export default {
     mixins: [MouseHandlers],
     name: 'siema-slider',

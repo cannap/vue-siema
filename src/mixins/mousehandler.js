@@ -1,4 +1,4 @@
-var mouseHandlers = {
+export default  {
 
   methods: {
     mousedownHandler: function (e) {
@@ -40,4 +40,4 @@ var mouseHandlers = {
     }
   }
 }
-exports.default = mouseHandlers
+

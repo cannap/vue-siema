@@ -9,6 +9,10 @@
     "build": "webpack -p --config build/webpack.prod.conf.js",
     "dev": "webpack-dev-server --inline --hot --config build/webpack.dev.conf.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cannap/vue-siema.git"
+  },
   "dependencies": {
     "vue": "^2.0.1"
   },

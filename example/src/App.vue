@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  import  Siema from '../../src'
+  import Siema from 'vue-siema'
 
   export default {
     name: 'hello',

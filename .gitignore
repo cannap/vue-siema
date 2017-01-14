@@ -5,4 +5,4 @@ node_modules/
 /.tmp/
 /test/log/*
 
-/example/__build__.js
+

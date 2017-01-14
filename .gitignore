@@ -1,7 +1,8 @@
-.DS_Store
 node_modules/
-dist/
-npm-debug.log
-.idea
+*.log*
 
+/dist/
+/.tmp/
+/test/log/*
 
+/example/__build__.js

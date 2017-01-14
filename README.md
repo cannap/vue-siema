@@ -1,3 +1,3 @@
 # vue-siema
 
-> A Vue.js 2.0 Component
+> A Vue.js 2.0 Component **WIP**

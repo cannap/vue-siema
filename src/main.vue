@@ -1,16 +1,13 @@
 <template>
   <div id="app" class="component">
-    <hello></hello>
+    Works
   </div>
 </template>
 
 <script>
-import Hello from './hello'
 
-export default {
-  name: 'app',
-  components: {
-    Hello
+  export default {
+    name: 'app',
+ 
   }
-}
 </script>

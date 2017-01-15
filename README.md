@@ -23,7 +23,10 @@ This project is based on https://github.com/pawelgrzybek/siema
 | threshold  | Number  | 20         | false    |
 | loop       | Boolean | true       | false    |
 
-
+##Events 
+| Name         	| Fires                	| returns      	|
+|--------------	|----------------------	|--------------	|
+| @slideChange 	| Init / Slide changed 	| currentIndex 	|
 
 
 ##Usage 

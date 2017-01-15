@@ -1,5 +1,5 @@
 <template>
-    <div class="siema" ref="wrap"
+    <div class="siema" v-if="draggable" style="overflow:hidden" ref="wrap"
          @mouseleave="mouseleaveHandler"
          @mouseup="mouseupHandler"
          @mousedown="mousedownHandler"
@@ -8,17 +8,29 @@
          @touchend="touchendHandler"
          @touchmove="touchmoveHandler">
         <div class="inner-siema" :style="styleObject">
-            <div class="siema-slide" :class="{'active': index === currentSlide}"  v-for="(slide,index) in slides" v-html="slide"
+            <div class="siema-slide" :class="{'active': index === currentSlide}" v-for="(slide,index) in slides"
+                 v-html="slide"
                  :style="slideStyle"></div>
         </div>
     </div>
+
+    <div class="siema" v-else style="overflow:hidden" ref="wrap">
+        <div class="inner-siema" :style="styleObject">
+            <div class="siema-slide" :class="{'active': index === currentSlide}" v-for="(slide,index) in slides"
+                 v-html="slide"
+                 :style="slideStyle"></div>
+        </div>
+    </div>
+
 </template>
 
 <script>
   import MouseHandlers from './mixins/mouseHandler'
   import TouchHandlers from './mixins/touchHandler'
+
   export default {
     mixins: [MouseHandlers, TouchHandlers],
+
     name: 'siema-slider',
     computed: {
       slideStyle () {
@@ -59,7 +71,7 @@
       },
       draggable: {
         type: Boolean,
-        default: false
+        default: true
       },
       direction: {
         type: String,
@@ -99,7 +111,7 @@
       }
       // Fire
       this.init()
-     // window.addEventListener('resize', this.resize)
+      // window.addEventListener('resize', this.resize)
     },
 
     methods: {
@@ -112,6 +124,13 @@
           webkitTransition: `all ${this.duration}ms ${this.easing}`,
           cursor: '-webkit-grab'
         })
+s
+        var callbackValues = {
+          currentSlide: this.currentSlide,
+          isFirst: this.currentSlide === 0,
+          isLast: this.currentSlide + 1 === this.slides.length
+        }
+        this.$emit('slideChange', callbackValues)
 
         this.width = siemaWidth
       },
@@ -186,17 +205,6 @@
       'slides' (newVal, oldVal) {
         this.init()
       }
-    }
+    },
   }
 </script>
-
-<style>
-
-    .siema {
-        overflow: hidden;
-    }
-
-    .siema-slide {
-        float: left;
-    }
-</style>

@@ -1,7 +1,7 @@
 
 ##WIP !!!
 
-Watch me coding: [📺](https://www.liveedu.tv/cannap/)
+Watch progress on liveedu.tv: [📺🎥 Click 🍿](https://www.liveedu.tv/cannap/) 
 
 vue-siema - Lightweight and simple carousel for Vue <br>
 This project is based on https://github.com/pawelgrzybek/siema

@@ -1,6 +1,9 @@
 
 ##WIP !!!
 
+Watch me coding:
+[<img src="https://tools.livecoding.tv/badge/statusLogo/1/cannap">](https://www.liveedu.tv/cannap/)
+
 vue-siema - Lightweight and simple carousel for Vue <br>
 This project is based on https://github.com/pawelgrzybek/siema
 
@@ -23,10 +26,11 @@ This project is based on https://github.com/pawelgrzybek/siema
 | threshold  | Number  | 20         | false    |
 | loop       | Boolean | true       | false    |
 
+
 ##Events 
-| Name         	| Fires                	| returns      	|
-|--------------	|----------------------	|--------------	|
-| @slideChange 	| Init / Slide changed 	| currentIndex 	|
+| Name         | Fires                | returns      |
+|--------------|----------------------|--------------|
+| @slideChange | Init / Slide changed | currentIndex |
 
 
 ##Usage 

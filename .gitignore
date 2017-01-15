@@ -3,4 +3,6 @@ node_modules/
 /dist/
 /.tmp/
 /test/log/*
-gh-page
+gh-page/*
+.idea/
+

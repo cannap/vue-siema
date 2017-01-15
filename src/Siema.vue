@@ -38,7 +38,6 @@
       slideStyle () {
         return {
           float: 'left',
-          cssFloat: 'left',
           width: `${100 / this.slides.length}%`
         }
       },
@@ -109,7 +108,6 @@
 
     mounted () {
       // Todo: Debounce
-
       if (this.draggable) {
         this.pointerDown = false
         this.drag.start = 0
@@ -121,7 +119,6 @@
 
     created() {
       window.addEventListener('resize', this.resize)
-
     },
     methods: {
 

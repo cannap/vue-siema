@@ -18,7 +18,7 @@
   import MouseHandlers from './mixins/mouseHandler'
   import TouchHandlers from './mixins/touchHandler'
   export default {
-    mixins: [MouseHandlers,TouchHandlers],
+    mixins: [MouseHandlers, TouchHandlers],
     name: 'siema-slider',
     computed: {
       slideStyle () {
@@ -170,12 +170,10 @@
         this.slideToCurrent()
       },
 
-
-
-    beforeDestroy() {
-      window.removeEventListener('resize', this.resize)
+      beforeDestroy() {
+        window.removeEventListener('resize', this.resize)
+      },
     },
-
     watch: {
       'currentSlide' (newVal, oldVal) {
         // Todo: maybe save this in data for simpler reuse
@@ -186,7 +184,6 @@
           isLast: newVal + 1 === this.slides.length
         }
 
-        //remove class form active slide
         this.$refs.slide[oldVal].classList.remove('active')
         this.$refs.slide[newVal].classList.add('active')
 

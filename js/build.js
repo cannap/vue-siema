@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -538,13 +538,13 @@ var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* styles */
-__webpack_require__(15)
+__webpack_require__(16)
 
 /* script */
 __vue_exports__ = __webpack_require__(5)
 
 /* template */
-var __vue_template__ = __webpack_require__(13)
+var __vue_template__ = __webpack_require__(14)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -6719,7 +6719,7 @@ setTimeout(function () {
 
 module.exports = Vue$2;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(16)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(17)))
 
 /***/ },
 /* 5 */
@@ -6792,6 +6792,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_mouseHandler__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mixins_touchHandler__ = __webpack_require__(9);
 Object.defineProperty(exports, "__esModule", { value: true });
 //
 //
@@ -6808,10 +6809,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //
 //
 //
+//
+
 
 
 /* harmony default export */ exports["default"] = {
-  mixins: [__WEBPACK_IMPORTED_MODULE_0__mixins_mouseHandler__["a" /* default */]],
+  mixins: [__WEBPACK_IMPORTED_MODULE_0__mixins_mouseHandler__["a" /* default */], __WEBPACK_IMPORTED_MODULE_1__mixins_touchHandler__["a" /* default */]],
   name: 'siema-slider',
   computed: {
     slideStyle: function slideStyle() {
@@ -6905,6 +6908,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
         webkitTransition: 'all ' + this.duration + 'ms ' + this.easing,
         cursor: '-webkit-grab'
       });
+      this.$refs.slide[this.startIndex].classList.add('active');
+
       this.width = siemaWidth;
     },
     clearDrag: function clearDrag() {
@@ -6955,43 +6960,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
       this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1);
       this.slideToCurrent();
     },
-    touchstartHandler: function touchstartHandler(e) {
-      e.stopPropagation();
-      this.pointerDown = true;
-      this.drag.start = e.touches[0].pageX;
-    },
-    touchendHandler: function touchendHandler(e) {
-      e.stopPropagation();
-      this.pointerDown = false;
-      this.styleObject.transition = 'all ' + this.duration + 'ms ' + this.easing;
-      if (this.drag.end) {
-        this.updateAfterDrag();
-      }
-      this.clearDrag();
-    },
-    touchmoveHandler: function touchmoveHandler(e) {
-      e.stopPropagation();
-      if (this.pointerDown) {
-        this.drag.end = e.touches[0].pageX;
-        this.styleObject.transition = 'all 0ms ' + this.easing;
-        this.styleObject.transform = 'translate3d(' + (this.currentSlide * (this.styleObject.width / this.perPage) + (this.drag.start - this.drag.end)) * -1 + 'px, 0, 0)';
-      }
+    beforeDestroy: function beforeDestroy() {
+      window.removeEventListener('resize', this.resize);
     }
   },
-
-  beforeDestroy: function beforeDestroy() {
-    window.removeEventListener('resize', this.resize);
-  },
-
-
   watch: {
     'currentSlide': function currentSlide(newVal, oldVal) {
       // Todo: maybe save this in data for simpler reuse
+
       var callbackValues = {
-        currentSlide: newVal + 1,
+        currentSlide: newVal,
         isFirst: newVal === 0,
         isLast: newVal + 1 === this.slides.length
       };
+
+      this.$refs.slide[oldVal].classList.remove('active');
+      this.$refs.slide[newVal].classList.add('active');
 
       this.$emit('slideChange', callbackValues);
     },
@@ -7008,7 +6992,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Siema_vue__ = __webpack_require__(11);
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Siema_vue__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Siema_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Siema_vue__);
 /* harmony reexport (default from non-hamory) */ __webpack_require__.d(exports, "a", function() { return __WEBPACK_IMPORTED_MODULE_0__Siema_vue___default.a; });
 
@@ -7070,18 +7054,51 @@ var mouseHandlers = {
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+"use strict";
+var touchHandlers = {
+  methods: {
+    touchstartHandler: function touchstartHandler(e) {
+      e.stopPropagation();
+      this.pointerDown = true;
+      this.drag.start = e.touches[0].pageX;
+    },
+    touchendHandler: function touchendHandler(e) {
+      e.stopPropagation();
+      this.pointerDown = false;
+      this.styleObject.transition = "all " + this.duration + "ms " + this.easing;
+      if (this.drag.end) {
+        this.updateAfterDrag();
+      }
+      this.clearDrag();
+    },
+    touchmoveHandler: function touchmoveHandler(e) {
+      e.stopPropagation();
+      if (this.pointerDown) {
+        this.drag.end = e.touches[0].pageX;
+        this.styleObject.transition = "all 0ms " + this.easing;
+        this.styleObject.transform = "translate3d(" + (this.currentSlide * (this.styleObject.width / this.perPage) + (this.drag.start - this.drag.end)) * -1 + "px, 0, 0)";
+      }
+    }
+  }
+};
+/* harmony default export */ exports["a"] = touchHandlers;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
 exports = module.exports = __webpack_require__(0)();
 // imports
 
 
 // module
-exports.push([module.i, "\n.siema {\n  overflow: hidden;\n}\n.siema-slide {\n  float: left;\n}\n", "", {"version":3,"sources":["/../src/Siema.vue?08d51bfe"],"names":[],"mappings":";AAwNA;EACA,iBAAA;CACA;AAEA;EACA,YAAA;CACA","file":"Siema.vue","sourcesContent":["<template>\r\n  <div class=\"siema\" ref=\"wrap\"\r\n       @mouseleave=\"mouseleaveHandler\"\r\n       @mouseup=\"mouseupHandler\"\r\n       @mousedown=\"mousedownHandler\"\r\n       @mousemove=\"mousemoveHandler\"\r\n       @touchstart=\"touchstartHandler\"\r\n       @touchend=\"touchendHandler\"\r\n       @touchmove=\"touchmoveHandler\">\r\n    <div class=\"inner-siema\" :style=\"styleObject\">\r\n      <div class=\"siema-slide\" v-for=\"slide in slides\" v-html=\"slide\" :style=\"slideStyle\"></div>\r\n    </div>\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n  import MouseHandlers from './mixins/mouseHandler'\r\n  export default {\r\n    mixins: [MouseHandlers],\r\n    name: 'siema-slider',\r\n    computed: {\r\n      slideStyle () {\r\n        return {\r\n          float: 'left',\r\n          cssFloat: 'left',\r\n          width: `${100 / this.slides.length}%`\r\n        }\r\n      }\r\n    },\r\n\r\n    props: {\r\n      duration: {\r\n        type: Number,\r\n        default: 200\r\n      },\r\n      slides: {\r\n        type: Array,\r\n        required: true\r\n      },\r\n      easing: {\r\n        type: String,\r\n        default: 'ease-out'\r\n      },\r\n      perPage: {\r\n        type: Number,\r\n        default: 1\r\n      },\r\n      // Todo: find a beter name\r\n      restartSliderAfterAdd: {\r\n        type: Boolean,\r\n        default: false\r\n      },\r\n\r\n      startIndex: {\r\n        type: Number,\r\n        default: 0\r\n      },\r\n      draggable: {\r\n        type: Boolean,\r\n        default: false\r\n      },\r\n      direction: {\r\n        type: String,\r\n        default: 'ltr'\r\n      },\r\n      threshold: {\r\n        type: Number,\r\n        default: 20\r\n      },\r\n      loop: {\r\n        type: Boolean,\r\n        default: true\r\n      }\r\n    },\r\n\r\n    data () {\r\n      return {\r\n        styleObject: {\r\n          transform: 'none'\r\n        },\r\n        width: 0,\r\n        currentSlide: 0,\r\n        pointerDown: true,\r\n        drag: {\r\n          start: 0,\r\n          end: 0\r\n        }\r\n      }\r\n    },\r\n\r\n    mounted () {\r\n      // Todo: Debounce\r\n\r\n      if (this.draggable) {\r\n        this.pointerDown = false\r\n        this.drag.start = 0\r\n        this.drag.end = 0\r\n      }\r\n      // Fire\r\n      this.init()\r\n      window.addEventListener('resize', this.resize)\r\n    },\r\n\r\n    methods: {\r\n      init () {\r\n        const siemaWidth = this.$refs.wrap.getBoundingClientRect().width\r\n        this.styleObject = Object.assign({}, this.styleObject, {\r\n          width: `${(siemaWidth / this.perPage) * this.slides.length}px`, // The Container width\r\n          transition: `all ${this.duration}ms ${this.easing}`,\r\n          webkitTransition: `all ${this.duration}ms ${this.easing}`,\r\n          cursor: '-webkit-grab'\r\n        })\r\n        this.width = siemaWidth\r\n      },\r\n      clearDrag () {\r\n        this.drag = {\r\n          start: 0,\r\n          end: 0\r\n        }\r\n      },\r\n\r\n      updateAfterDrag () {\r\n        const movement = this.drag.end - this.drag.start\r\n        if (movement > 0 && Math.abs(movement) > this.threshold) {\r\n          this.prev()\r\n        } else if (movement < 0 && Math.abs(movement) > this.threshold) {\r\n          this.next()\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n      next () {\r\n        if (this.currentSlide === this.slides.length - this.perPage && this.loop) {\r\n          this.currentSlide = 0\r\n        } else {\r\n          this.currentSlide = Math.min(this.currentSlide + 1, this.slides.length - this.perPage)\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      prev () {\r\n        if (this.currentSlide === 0 && this.loop) {\r\n          this.currentSlide = this.slides.length - this.perPage\r\n        } else {\r\n          this.currentSlide = Math.max(this.currentSlide - 1, 0)\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      slideToCurrent () {\r\n        this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`\r\n      },\r\n\r\n      resize () {\r\n        var siemaWidth = this.$refs.wrap.getBoundingClientRect().width\r\n        this.styleObject.width = `${(siemaWidth / this.perPage) * this.slides.length}px`\r\n        this.width = siemaWidth\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      // Public\r\n\r\n      goTo (index) {\r\n        this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1)\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      touchstartHandler (e) {\r\n        e.stopPropagation()\r\n        this.pointerDown = true\r\n        this.drag.start = e.touches[0].pageX\r\n      },\r\n      touchendHandler (e) {\r\n        e.stopPropagation()\r\n        this.pointerDown = false\r\n        this.styleObject.transition = `all ${this.duration}ms ${this.easing}`\r\n        if (this.drag.end) {\r\n          this.updateAfterDrag()\r\n        }\r\n        this.clearDrag()\r\n      },\r\n\r\n      touchmoveHandler (e) {\r\n        e.stopPropagation()\r\n        if (this.pointerDown) {\r\n          this.drag.end = e.touches[0].pageX\r\n          this.styleObject.transition = `all 0ms ${this.easing}`\r\n          this.styleObject.transform = `translate3d(${(this.currentSlide * (this.styleObject.width / this.perPage) + (this.drag.start - this.drag.end)) * -1}px, 0, 0)`\r\n        }\r\n      }\r\n    },\r\n\r\n    beforeDestroy() {\r\n      window.removeEventListener('resize', this.resize)\r\n    },\r\n\r\n    watch: {\r\n      'currentSlide' (newVal, oldVal) {\r\n        // Todo: maybe save this in data for simpler reuse\r\n        var callbackValues = {\r\n          currentSlide: newVal + 1,\r\n          isFirst: newVal === 0,\r\n          isLast: newVal + 1 === this.slides.length\r\n        }\r\n\r\n        this.$emit('slideChange', callbackValues)\r\n      },\r\n      // Reinit the slider after new slides comes in\r\n      'slides' (newVal, oldVal) {\r\n        this.init()\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n\r\n  .siema {\r\n    overflow: hidden;\r\n  }\r\n\r\n  .siema-slide {\r\n    float: left;\r\n  }\r\n</style>"],"sourceRoot":"webpack://"}]);
+exports.push([module.i, "\n.siema {\n    overflow: hidden;\n}\n.siema-slide {\n    float: left;\n}\n", "", {"version":3,"sources":["/../src/Siema.vue?3ac662c8"],"names":[],"mappings":";AAyMA;IACA,iBAAA;CACA;AAEA;IACA,YAAA;CACA","file":"Siema.vue","sourcesContent":["<template>\r\n    <div class=\"siema\" ref=\"wrap\"\r\n         @mouseleave=\"mouseleaveHandler\"\r\n         @mouseup=\"mouseupHandler\"\r\n         @mousedown=\"mousedownHandler\"\r\n         @mousemove=\"mousemoveHandler\"\r\n         @touchstart=\"touchstartHandler\"\r\n         @touchend=\"touchendHandler\"\r\n         @touchmove=\"touchmoveHandler\">\r\n        <div class=\"inner-siema\" :style=\"styleObject\">\r\n            <div class=\"siema-slide\" ref=\"slide\" v-for=\"(slide,index) in slides\" v-html=\"slide\"\r\n                 :style=\"slideStyle\"></div>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import MouseHandlers from './mixins/mouseHandler'\r\n  import TouchHandlers from './mixins/touchHandler'\r\n  export default {\r\n    mixins: [MouseHandlers, TouchHandlers],\r\n    name: 'siema-slider',\r\n    computed: {\r\n      slideStyle () {\r\n        return {\r\n          float: 'left',\r\n          cssFloat: 'left',\r\n          width: `${100 / this.slides.length}%`\r\n        }\r\n      },\r\n\r\n    },\r\n\r\n    props: {\r\n      duration: {\r\n        type: Number,\r\n        default: 200\r\n      },\r\n      slides: {\r\n        type: Array,\r\n        required: true\r\n      },\r\n      easing: {\r\n        type: String,\r\n        default: 'ease-out'\r\n      },\r\n      perPage: {\r\n        type: Number,\r\n        default: 1\r\n      },\r\n      // Todo: find a beter name\r\n      restartSliderAfterAdd: {\r\n        type: Boolean,\r\n        default: false\r\n      },\r\n\r\n      startIndex: {\r\n        type: Number,\r\n        default: 0\r\n      },\r\n      draggable: {\r\n        type: Boolean,\r\n        default: false\r\n      },\r\n      direction: {\r\n        type: String,\r\n        default: 'ltr'\r\n      },\r\n      threshold: {\r\n        type: Number,\r\n        default: 20\r\n      },\r\n      loop: {\r\n        type: Boolean,\r\n        default: true\r\n      }\r\n    },\r\n\r\n    data () {\r\n      return {\r\n        styleObject: {\r\n          transform: 'none'\r\n        },\r\n        width: 0,\r\n        currentSlide: 0,\r\n        pointerDown: true,\r\n        drag: {\r\n          start: 0,\r\n          end: 0\r\n        }\r\n      }\r\n    },\r\n\r\n    mounted () {\r\n      // Todo: Debounce\r\n\r\n      if (this.draggable) {\r\n        this.pointerDown = false\r\n        this.drag.start = 0\r\n        this.drag.end = 0\r\n      }\r\n      // Fire\r\n      this.init()\r\n      window.addEventListener('resize', this.resize)\r\n    },\r\n\r\n    methods: {\r\n\r\n      init () {\r\n        const siemaWidth = this.$refs.wrap.getBoundingClientRect().width\r\n        this.styleObject = Object.assign({}, this.styleObject, {\r\n          width: `${(siemaWidth / this.perPage) * this.slides.length}px`, // The Container width\r\n          transition: `all ${this.duration}ms ${this.easing}`,\r\n          webkitTransition: `all ${this.duration}ms ${this.easing}`,\r\n          cursor: '-webkit-grab'\r\n        })\r\n        this.$refs.slide[this.startIndex].classList.add('active')\r\n\r\n        this.width = siemaWidth\r\n      },\r\n      clearDrag () {\r\n        this.drag = {\r\n          start: 0,\r\n          end: 0\r\n        }\r\n      },\r\n\r\n      updateAfterDrag () {\r\n        const movement = this.drag.end - this.drag.start\r\n        if (movement > 0 && Math.abs(movement) > this.threshold) {\r\n          this.prev()\r\n        } else if (movement < 0 && Math.abs(movement) > this.threshold) {\r\n          this.next()\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n      next () {\r\n        if (this.currentSlide === this.slides.length - this.perPage && this.loop) {\r\n          this.currentSlide = 0\r\n        } else {\r\n          this.currentSlide = Math.min(this.currentSlide + 1, this.slides.length - this.perPage)\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      prev () {\r\n        if (this.currentSlide === 0 && this.loop) {\r\n          this.currentSlide = this.slides.length - this.perPage\r\n        } else {\r\n          this.currentSlide = Math.max(this.currentSlide - 1, 0)\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      slideToCurrent () {\r\n        this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`\r\n      },\r\n\r\n      resize () {\r\n        var siemaWidth = this.$refs.wrap.getBoundingClientRect().width\r\n        this.styleObject.width = `${(siemaWidth / this.perPage) * this.slides.length}px`\r\n        this.width = siemaWidth\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      // Public\r\n\r\n      goTo (index) {\r\n        this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1)\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      beforeDestroy() {\r\n        window.removeEventListener('resize', this.resize)\r\n      },\r\n    },\r\n    watch: {\r\n      'currentSlide' (newVal, oldVal) {\r\n        // Todo: maybe save this in data for simpler reuse\r\n\r\n        var callbackValues = {\r\n          currentSlide: newVal,\r\n          isFirst: newVal === 0,\r\n          isLast: newVal + 1 === this.slides.length\r\n        }\r\n\r\n        this.$refs.slide[oldVal].classList.remove('active')\r\n        this.$refs.slide[newVal].classList.add('active')\r\n\r\n        this.$emit('slideChange', callbackValues)\r\n      },\r\n      // Reinit the slider after new slides comes in\r\n      'slides' (newVal, oldVal) {\r\n        this.init()\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n\r\n    .siema {\r\n        overflow: hidden;\r\n    }\r\n\r\n    .siema-slide {\r\n        float: left;\r\n    }\r\n</style>"],"sourceRoot":"webpack://"}]);
 
 // exports
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)();
@@ -7095,20 +7112,20 @@ exports.push([module.i, "\nhtml {\n  font-size: 16px;\n}\nbody {\n  width: 100%;
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* styles */
-__webpack_require__(14)
+__webpack_require__(15)
 
 /* script */
 __vue_exports__ = __webpack_require__(6)
 
 /* template */
-var __vue_template__ = __webpack_require__(12)
+var __vue_template__ = __webpack_require__(13)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -7142,7 +7159,7 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -7161,8 +7178,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "inner-siema",
     style: (_vm.styleObject)
-  }, _vm._l((_vm.slides), function(slide) {
+  }, _vm._l((_vm.slides), function(slide, index) {
     return _c('div', {
+      ref: "slide",
+      refInFor: true,
       staticClass: "siema-slide",
       style: (_vm.slideStyle),
       domProps: {
@@ -7180,7 +7199,7 @@ if (false) {
 }
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -7262,13 +7281,13 @@ if (false) {
 }
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(9);
+var content = __webpack_require__(10);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(2)(content, {});
@@ -7288,13 +7307,13 @@ if(false) {
 }
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(10);
+var content = __webpack_require__(11);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(2)(content, {});
@@ -7314,7 +7333,7 @@ if(false) {
 }
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 var g;
@@ -7339,7 +7358,7 @@ module.exports = g;
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";

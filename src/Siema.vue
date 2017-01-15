@@ -8,7 +8,7 @@
          @touchend="touchendHandler"
          @touchmove="touchmoveHandler">
         <div class="inner-siema" :style="styleObject">
-            <div class="siema-slide" ref="slide" v-for="(slide,index) in slides" v-html="slide"
+            <div class="siema-slide" :class="{'active': index === currentSlide}"  v-for="(slide,index) in slides" v-html="slide"
                  :style="slideStyle"></div>
         </div>
     </div>
@@ -83,7 +83,7 @@
         },
         width: 0,
         currentSlide: 0,
-        pointerDown: true,
+        pointerDown: false,
         drag: {
           start: 0,
           end: 0
@@ -101,7 +101,7 @@
       }
       // Fire
       this.init()
-      window.addEventListener('resize', this.resize)
+     // window.addEventListener('resize', this.resize)
     },
 
     methods: {
@@ -114,9 +114,9 @@
           webkitTransition: `all ${this.duration}ms ${this.easing}`,
           cursor: '-webkit-grab'
         })
-        this.$refs.slide[this.startIndex].classList.add('active')
 
         this.width = siemaWidth
+
       },
       clearDrag () {
         this.drag = {
@@ -183,10 +183,6 @@
           isFirst: newVal === 0,
           isLast: newVal + 1 === this.slides.length
         }
-
-        this.$refs.slide[oldVal].classList.remove('active')
-        this.$refs.slide[newVal].classList.add('active')
-
         this.$emit('slideChange', callbackValues)
       },
       // Reinit the slider after new slides comes in

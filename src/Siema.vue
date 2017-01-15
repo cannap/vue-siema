@@ -1,22 +1,24 @@
 <template>
-  <div class="siema" ref="wrap"
-       @mouseleave="mouseleaveHandler"
-       @mouseup="mouseupHandler"
-       @mousedown="mousedownHandler"
-       @mousemove="mousemoveHandler"
-       @touchstart="touchstartHandler"
-       @touchend="touchendHandler"
-       @touchmove="touchmoveHandler">
-    <div class="inner-siema" :style="styleObject">
-      <div class="siema-slide" v-for="slide in slides" v-html="slide" :style="slideStyle"></div>
+    <div class="siema" ref="wrap"
+         @mouseleave="mouseleaveHandler"
+         @mouseup="mouseupHandler"
+         @mousedown="mousedownHandler"
+         @mousemove="mousemoveHandler"
+         @touchstart="touchstartHandler"
+         @touchend="touchendHandler"
+         @touchmove="touchmoveHandler">
+        <div class="inner-siema" :style="styleObject">
+            <div class="siema-slide" ref="slide" v-for="(slide,index) in slides" v-html="slide"
+                 :style="slideStyle"></div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
   import MouseHandlers from './mixins/mouseHandler'
+  import TouchHandlers from './mixins/touchHandler'
   export default {
-    mixins: [MouseHandlers],
+    mixins: [MouseHandlers,TouchHandlers],
     name: 'siema-slider',
     computed: {
       slideStyle () {
@@ -25,7 +27,8 @@
           cssFloat: 'left',
           width: `${100 / this.slides.length}%`
         }
-      }
+      },
+
     },
 
     props: {
@@ -102,6 +105,7 @@
     },
 
     methods: {
+
       init () {
         const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
         this.styleObject = Object.assign({}, this.styleObject, {
@@ -110,6 +114,8 @@
           webkitTransition: `all ${this.duration}ms ${this.easing}`,
           cursor: '-webkit-grab'
         })
+        this.$refs.slide[this.startIndex].classList.add('active')
+
         this.width = siemaWidth
       },
       clearDrag () {
@@ -164,30 +170,7 @@
         this.slideToCurrent()
       },
 
-      touchstartHandler (e) {
-        e.stopPropagation()
-        this.pointerDown = true
-        this.drag.start = e.touches[0].pageX
-      },
-      touchendHandler (e) {
-        e.stopPropagation()
-        this.pointerDown = false
-        this.styleObject.transition = `all ${this.duration}ms ${this.easing}`
-        if (this.drag.end) {
-          this.updateAfterDrag()
-        }
-        this.clearDrag()
-      },
 
-      touchmoveHandler (e) {
-        e.stopPropagation()
-        if (this.pointerDown) {
-          this.drag.end = e.touches[0].pageX
-          this.styleObject.transition = `all 0ms ${this.easing}`
-          this.styleObject.transform = `translate3d(${(this.currentSlide * (this.styleObject.width / this.perPage) + (this.drag.start - this.drag.end)) * -1}px, 0, 0)`
-        }
-      }
-    },
 
     beforeDestroy() {
       window.removeEventListener('resize', this.resize)
@@ -196,11 +179,16 @@
     watch: {
       'currentSlide' (newVal, oldVal) {
         // Todo: maybe save this in data for simpler reuse
+
         var callbackValues = {
           currentSlide: newVal + 1,
           isFirst: newVal === 0,
           isLast: newVal + 1 === this.slides.length
         }
+
+        //remove class form active slide
+        this.$refs.slide[oldVal].classList.remove('active')
+        this.$refs.slide[newVal].classList.add('active')
 
         this.$emit('slideChange', callbackValues)
       },
@@ -214,11 +202,11 @@
 
 <style>
 
-  .siema {
-    overflow: hidden;
-  }
+    .siema {
+        overflow: hidden;
+    }
 
-  .siema-slide {
-    float: left;
-  }
+    .siema-slide {
+        float: left;
+    }
 </style>

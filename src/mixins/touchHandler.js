@@ -16,7 +16,6 @@ var touchHandlers = {
     },
 
     touchmoveHandler (e) {
-      console.log('tocued')
       e.stopPropagation()
       if (this.pointerDown) {
         this.drag.end = e.touches[0].pageX

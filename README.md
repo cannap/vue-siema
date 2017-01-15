@@ -64,4 +64,5 @@ This project is based on https://github.com/pawelgrzybek/siema
 - [x] Touch Stuff
 - [ ] Dynamically adding/remove Slides
 - [ ] Events
+- [ ] SSR compatibility (check)
 - [x] Pagination(example)

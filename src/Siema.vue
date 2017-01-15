@@ -27,8 +27,7 @@
           cssFloat: 'left',
           width: `${100 / this.slides.length}%`
         }
-      },
-
+      }
     },
 
     props: {
@@ -93,7 +92,6 @@
 
     mounted () {
       // Todo: Debounce
-
       if (this.draggable) {
         this.pointerDown = false
         this.drag.start = 0
@@ -116,7 +114,6 @@
         })
 
         this.width = siemaWidth
-
       },
       clearDrag () {
         this.drag = {
@@ -170,9 +167,9 @@
         this.slideToCurrent()
       },
 
-      beforeDestroy() {
+      beforeDestroy () {
         window.removeEventListener('resize', this.resize)
-      },
+      }
     },
     watch: {
       'currentSlide' (newVal, oldVal) {

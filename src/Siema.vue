@@ -30,7 +30,6 @@
 
   export default {
     mixins: [MouseHandlers, TouchHandlers],
-
     name: 'siema-slider',
     computed: {
       slideStyle () {
@@ -124,15 +123,12 @@
           webkitTransition: `all ${this.duration}ms ${this.easing}`,
           cursor: '-webkit-grab'
         })
-s
-        var callbackValues = {
-          currentSlide: this.currentSlide,
-          isFirst: this.currentSlide === 0,
-          isLast: this.currentSlide + 1 === this.slides.length
-        }
-        this.$emit('slideChange', callbackValues)
 
+        this.currentSlide = this.startIndex
         this.width = siemaWidth
+        this.$emit('slideChange', this.currentSlide)
+        this.slideToCurrent()
+
       },
       clearDrag () {
         this.drag = {
@@ -194,12 +190,7 @@ s
       'currentSlide' (newVal, oldVal) {
         // Todo: maybe save this in data for simpler reuse
 
-        var callbackValues = {
-          currentSlide: newVal,
-          isFirst: newVal === 0,
-          isLast: newVal + 1 === this.slides.length
-        }
-        this.$emit('slideChange', callbackValues)
+        this.$emit('slideChange', newVal)
       },
       // Reinit the slider after new slides comes in
       'slides' (newVal, oldVal) {

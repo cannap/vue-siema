@@ -11,7 +11,7 @@
     "lightweight"
   ],
   "license": "MIT",
-  "main": "dist/template-vue-component.cjs.js",
+  "main": "dist/template-vue-siema.min.js",
   "files": [
     "dist"
   ],
@@ -29,7 +29,7 @@
     "build": "run-p build:cjs build:dev build:prod",
     "build:cjs": "rollup -c scripts/rollup.config.js --environment BUILD:cjs",
     "build:dev": "rollup -c scripts/rollup.config.js --environment BUILD:dev",
-    "build:prod": "rollup -c scripts/rollup.config.js --environment BUILD:prod | uglifyjs -mc warnings=false --comments -o dist/template-vue-component.min.js",
+    "build:prod": "rollup -c scripts/rollup.config.js --environment BUILD:prod | uglifyjs -mc warnings=false --comments -o dist/template-vue-siema.min.js",
     "build:example": "webpack --config scripts/webpack.config.example.js",
     "release": "run-s clean build",
     "gh": "node scripts/gh-page.js"

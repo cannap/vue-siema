@@ -2,11 +2,11 @@ const path = require('path')
 const DashboardPlugin = require('webpack-dashboard/plugin')
 
 module.exports = {
-  context: path.resolve(__dirname, '../example'),
+  context: path.resolve(__dirname, '../example/'),
   entry: './main.js',
   output: {
-    path: path.resolve(__dirname, '../example'),
-    filename: '__build__.js'
+    path: path.resolve(__dirname, '../example/'),
+    filename: 'build.js'
   },
   resolve: {
     modules: ['node_modules'],
@@ -20,9 +20,6 @@ module.exports = {
     ]
   },
   performance: {hints: false},
-  stats: {
-    warnings: false
-  },
   plugins: [
     new DashboardPlugin()
   ],

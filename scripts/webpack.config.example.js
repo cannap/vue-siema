@@ -21,7 +21,7 @@ module.exports = {
   },
   performance: {hints: false},
   plugins: [
-    new DashboardPlugin()
+   // new DashboardPlugin()
   ],
   devtool: 'source-map',
   devServer: {

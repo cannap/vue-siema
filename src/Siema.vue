@@ -179,7 +179,7 @@
         // Todo: maybe save this in data for simpler reuse
 
         var callbackValues = {
-          currentSlide: newVal + 1,
+          currentSlide: newVal,
           isFirst: newVal === 0,
           isLast: newVal + 1 === this.slides.length
         }

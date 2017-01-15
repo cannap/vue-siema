@@ -1,7 +1,7 @@
 {
   "name": "vue-siema",
   "description": "Boilerplate for standalone Vue.js components",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "author": "Marko Bolliger <marko@renka.de> (https://renka.de)",
   "private": false,
   "keywords": [

@@ -25,7 +25,7 @@
     "prepublish": "npm run release",
     "clean": "del /Q -rf dist .tmp",
     "start": "webpack-dev-server --config scripts/webpack.config.example.js",
-    "dev": "webpack-dashboard -- webpack-dev-server --inline --hot --no-info --config scripts/webpack.config.example.js",
+    "dev": "webpack-dev-server --inline --hot --no-info --config scripts/webpack.config.example.js",
     "build": "run-p build:cjs build:dev build:prod",
     "build:cjs": "rollup -c scripts/rollup.config.js --environment BUILD:cjs",
     "build:dev": "rollup -c scripts/rollup.config.js --environment BUILD:dev",
@@ -66,6 +66,7 @@
     "webpack-dev-server": "^2.1.0-beta.5"
   },
   "dependencies": {
+    "lodash.debounce": "^4.0.8",
     "vue": "^2.1.8"
   }
 }

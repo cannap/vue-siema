@@ -63,67 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 18);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function() {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		var result = [];
-		for(var i = 0; i < this.length; i++) {
-			var item = this[i];
-			if(item[2]) {
-				result.push("@media " + item[2] + "{" + item[1] + "}");
-			} else {
-				result.push(item[1]);
-			}
-		}
-		return result.join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-
-/***/ },
-/* 1 */
 /***/ function(module, exports) {
 
 // shim for using process in browser
@@ -309,242 +253,20 @@ process.umask = function() { return 0; };
 
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-var stylesInDom = {},
-	memoize = function(fn) {
-		var memo;
-		return function () {
-			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-			return memo;
-		};
-	},
-	isOldIE = memoize(function() {
-		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-	}),
-	getHeadElement = memoize(function () {
-		return document.head || document.getElementsByTagName("head")[0];
-	}),
-	singletonElement = null,
-	singletonCounter = 0,
-	styleElementsInsertedAtTop = [];
-
-module.exports = function(list, options) {
-	if(typeof DEBUG !== "undefined" && DEBUG) {
-		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-	}
-
-	options = options || {};
-	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-	// tags it will allow on a page
-	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-	// By default, add <style> tags to the bottom of <head>.
-	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-	var styles = listToStyles(list);
-	addStylesToDom(styles, options);
-
-	return function update(newList) {
-		var mayRemove = [];
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			domStyle.refs--;
-			mayRemove.push(domStyle);
-		}
-		if(newList) {
-			var newStyles = listToStyles(newList);
-			addStylesToDom(newStyles, options);
-		}
-		for(var i = 0; i < mayRemove.length; i++) {
-			var domStyle = mayRemove[i];
-			if(domStyle.refs === 0) {
-				for(var j = 0; j < domStyle.parts.length; j++)
-					domStyle.parts[j]();
-				delete stylesInDom[domStyle.id];
-			}
-		}
-	};
-}
-
-function addStylesToDom(styles, options) {
-	for(var i = 0; i < styles.length; i++) {
-		var item = styles[i];
-		var domStyle = stylesInDom[item.id];
-		if(domStyle) {
-			domStyle.refs++;
-			for(var j = 0; j < domStyle.parts.length; j++) {
-				domStyle.parts[j](item.parts[j]);
-			}
-			for(; j < item.parts.length; j++) {
-				domStyle.parts.push(addStyle(item.parts[j], options));
-			}
-		} else {
-			var parts = [];
-			for(var j = 0; j < item.parts.length; j++) {
-				parts.push(addStyle(item.parts[j], options));
-			}
-			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-		}
-	}
-}
-
-function listToStyles(list) {
-	var styles = [];
-	var newStyles = {};
-	for(var i = 0; i < list.length; i++) {
-		var item = list[i];
-		var id = item[0];
-		var css = item[1];
-		var media = item[2];
-		var sourceMap = item[3];
-		var part = {css: css, media: media, sourceMap: sourceMap};
-		if(!newStyles[id])
-			styles.push(newStyles[id] = {id: id, parts: [part]});
-		else
-			newStyles[id].parts.push(part);
-	}
-	return styles;
-}
-
-function insertStyleElement(options, styleElement) {
-	var head = getHeadElement();
-	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-	if (options.insertAt === "top") {
-		if(!lastStyleElementInsertedAtTop) {
-			head.insertBefore(styleElement, head.firstChild);
-		} else if(lastStyleElementInsertedAtTop.nextSibling) {
-			head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-		} else {
-			head.appendChild(styleElement);
-		}
-		styleElementsInsertedAtTop.push(styleElement);
-	} else if (options.insertAt === "bottom") {
-		head.appendChild(styleElement);
-	} else {
-		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-	}
-}
-
-function removeStyleElement(styleElement) {
-	styleElement.parentNode.removeChild(styleElement);
-	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-	if(idx >= 0) {
-		styleElementsInsertedAtTop.splice(idx, 1);
-	}
-}
-
-function createStyleElement(options) {
-	var styleElement = document.createElement("style");
-	styleElement.type = "text/css";
-	insertStyleElement(options, styleElement);
-	return styleElement;
-}
-
-function addStyle(obj, options) {
-	var styleElement, update, remove;
-
-	if (options.singleton) {
-		var styleIndex = singletonCounter++;
-		styleElement = singletonElement || (singletonElement = createStyleElement(options));
-		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-	} else {
-		styleElement = createStyleElement(options);
-		update = applyToTag.bind(null, styleElement);
-		remove = function() {
-			removeStyleElement(styleElement);
-		};
-	}
-
-	update(obj);
-
-	return function updateStyle(newObj) {
-		if(newObj) {
-			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-				return;
-			update(obj = newObj);
-		} else {
-			remove();
-		}
-	};
-}
-
-var replaceText = (function () {
-	var textStore = [];
-
-	return function (index, replacement) {
-		textStore[index] = replacement;
-		return textStore.filter(Boolean).join('\n');
-	};
-})();
-
-function applyToSingletonTag(styleElement, index, remove, obj) {
-	var css = remove ? "" : obj.css;
-
-	if (styleElement.styleSheet) {
-		styleElement.styleSheet.cssText = replaceText(index, css);
-	} else {
-		var cssNode = document.createTextNode(css);
-		var childNodes = styleElement.childNodes;
-		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-		if (childNodes.length) {
-			styleElement.insertBefore(cssNode, childNodes[index]);
-		} else {
-			styleElement.appendChild(cssNode);
-		}
-	}
-}
-
-function applyToTag(styleElement, obj) {
-	var css = obj.css;
-	var media = obj.media;
-	var sourceMap = obj.sourceMap;
-
-	if (media) {
-		styleElement.setAttribute("media", media);
-	}
-
-	if (sourceMap) {
-		// https://developer.chrome.com/devtools/docs/javascript-debugging
-		// this makes source maps inside style tags work properly in Chrome
-		css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */';
-		// http://stackoverflow.com/a/26603875
-		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-	}
-
-	if (styleElement.styleSheet) {
-		styleElement.styleSheet.cssText = css;
-	} else {
-		while(styleElement.firstChild) {
-			styleElement.removeChild(styleElement.firstChild);
-		}
-		styleElement.appendChild(document.createTextNode(css));
-	}
-}
-
-
-/***/ },
-/* 3 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
 /* styles */
-__webpack_require__(16)
+__webpack_require__(14)
 
 /* script */
-__vue_exports__ = __webpack_require__(5)
+__vue_exports__ = __webpack_require__(3)
 
 /* template */
-var __vue_template__ = __webpack_require__(14)
+var __vue_template__ = __webpack_require__(12)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -578,7 +300,7 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 4 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6719,14 +6441,14 @@ setTimeout(function () {
 
 module.exports = Vue$2;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(15)))
 
 /***/ },
-/* 5 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_index__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__src_index__ = __webpack_require__(5);
 Object.defineProperty(exports, "__esModule", { value: true });
 //
 //
@@ -6756,6 +6478,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
   },
   data: function data() {
     return {
+      buttons: {
+        prev: false,
+        next: false
+      },
+      loop: false,
       currentSlide: 0,
       sliderIndex: 2,
       slides: ['<img src="https://unsplash.it/600/350?image=10" alt="slide">', '<img src="https://unsplash.it/600/350?image=12" alt="slide">', '<img src="https://unsplash.it/600/350?image=13" alt="slide">', '<img src="https://unsplash.it/600/350?image=14" alt="slide">', '<img src="https://unsplash.it/600/350?image=15" alt="slide">', '<img src="https://unsplash.it/600/350?image=16" alt="slide">']
@@ -6768,8 +6495,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
     },
 
     // Events
-    slideChanged: function slideChanged(val) {
-      this.currentSlide = val;
+    slideChanged: function slideChanged(currentSlide) {
+      this.currentSlide = currentSlide;
+
+      /**
+       * This shows how to enable or disable button
+       */
+      if (!this.loop) {
+        this.buttons.prev = currentSlide === 0;
+        this.buttons.next = currentSlide === this.slides.length - 1;
+      }
     },
 
     // Controls
@@ -6787,12 +6522,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 };
 
 /***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_mouseHandler__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mixins_touchHandler__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mixins_mouseHandler__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mixins_touchHandler__ = __webpack_require__(7);
 Object.defineProperty(exports, "__esModule", { value: true });
 //
 //
@@ -6810,6 +6545,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -6855,7 +6601,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
     },
     draggable: {
       type: Boolean,
-      default: false
+      default: true
     },
     direction: {
       type: String,
@@ -6908,7 +6654,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
         cursor: '-webkit-grab'
       });
 
+      this.currentSlide = this.startIndex;
       this.width = siemaWidth;
+      this.$emit('slideChange', this.currentSlide);
+      this.slideToCurrent();
     },
     clearDrag: function clearDrag() {
       this.drag = {
@@ -6966,12 +6715,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
     'currentSlide': function currentSlide(newVal, oldVal) {
       // Todo: maybe save this in data for simpler reuse
 
-      var callbackValues = {
-        currentSlide: newVal,
-        isFirst: newVal === 0,
-        isLast: newVal + 1 === this.slides.length
-      };
-      this.$emit('slideChange', callbackValues);
+      this.$emit('slideChange', newVal);
     },
 
     // Reinit the slider after new slides comes in
@@ -6982,11 +6726,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 };
 
 /***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Siema_vue__ = __webpack_require__(12);
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Siema_vue__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Siema_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Siema_vue__);
 /* harmony reexport (default from non-hamory) */ __webpack_require__.d(exports, "a", function() { return __WEBPACK_IMPORTED_MODULE_0__Siema_vue___default.a; });
 
@@ -6994,10 +6738,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 if (process.env.NODE_ENV !== 'production') {
   console.log('Only print on development mode');
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ },
-/* 8 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7045,7 +6789,7 @@ var mouseHandlers = {
 /* harmony default export */ exports["a"] = mouseHandlers;
 
 /***/ },
-/* 9 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7078,48 +6822,87 @@ var touchHandlers = {
 /* harmony default export */ exports["a"] = touchHandlers;
 
 /***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(9)();
+// imports
+
+
+// module
+exports.push([module.i, "\nhtml {\n    font-size: 16px;\n}\nbody {\n    width: 100%;\n    max-width: 37.5rem;\n    margin: 0 auto;\n}\nimg {\n    max-width: 100%;\n    display: block;\n}\n", "", {"version":3,"sources":["/./App.vue?33d92ef8"],"names":[],"mappings":";AA6EA;IACA,gBAAA;CACA;AAEA;IACA,YAAA;IACA,mBAAA;IACA,eAAA;CACA;AAEA;IACA,gBAAA;IACA,eAAA;CACA","file":"App.vue","sourcesContent":["<template>\r\n    <div id=\"app\" class=\"component\">\r\n        <Siema ref=\"slider\" :loop=\"loop\" :startIndex=\"currentSlide\" :slides=\"slides\" @slideChange=\"slideChanged\">\r\n        </Siema>\r\n        <div class=\"controls\">\r\n            Current Slide:\r\n            <pre> {{currentSlide}} </pre>\r\n            <div class=\"buttons\">\r\n                <button type=\"button\" :disabled=\"buttons.prev\" @click=\"prev\">Prev</button>\r\n                <button type=\"button\" :disabled=\"buttons.next\" @click=\"next\">Next</button>\r\n                <br>\r\n                <button type=\"button\" @click=\"addSlide\">Add New Slide</button>\r\n            </div>\r\n        </div>\r\n        <input type=\"number\" v-model=\"sliderIndex\">\r\n        <button class=\"btn\" @click=\"goTo(sliderIndex)\">Go To</button>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import Siema from '../src/index'\r\n  export default {\r\n    name: 'app',\r\n    components: {\r\n      Siema\r\n    },\r\n    data () {\r\n      return {\r\n        buttons: {\r\n          prev: false,\r\n          next: false\r\n        },\r\n        loop: false,\r\n        currentSlide: 0,\r\n        sliderIndex: 2,\r\n        slides: [\r\n          '<img src=\"https://unsplash.it/600/350?image=10\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=12\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=13\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=14\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=15\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=16\" alt=\"slide\">'\r\n        ]\r\n      }\r\n    },\r\n    methods: {\r\n      goTo () {\r\n        this.$refs.slider.goTo(this.sliderIndex)\r\n      },\r\n      // Events\r\n      slideChanged (currentSlide) {\r\n        this.currentSlide = currentSlide\r\n\r\n        /**\r\n         * This shows how to enable or disable button\r\n         */\r\n        if (!this.loop) {\r\n          this.buttons.prev = currentSlide === 0\r\n          this.buttons.next = currentSlide === this.slides.length - 1\r\n        }\r\n      },\r\n      // Controls\r\n      prev () {\r\n        this.$refs.slider.prev()\r\n      },\r\n      next () {\r\n        this.$refs.slider.next()\r\n      },\r\n      addSlide () {\r\n        const number = Math.floor((Math.random() * 80) + 1)\r\n        this.slides.push(`<img src=\"https://unsplash.it/600/350?image=${number}\" alt=\"slide\">`)\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n    html {\r\n        font-size: 16px;\r\n    }\r\n\r\n    body {\r\n        width: 100%;\r\n        max-width: 37.5rem;\r\n        margin: 0 auto;\r\n    }\r\n\r\n    img {\r\n        max-width: 100%;\r\n        display: block;\r\n    }\r\n</style>"],"sourceRoot":"webpack://"}]);
+
+// exports
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function() {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		var result = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(item[2]) {
+				result.push("@media " + item[2] + "{" + item[1] + "}");
+			} else {
+				result.push(item[1]);
+			}
+		}
+		return result.join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+
+/***/ },
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(0)();
-// imports
-
-
-// module
-exports.push([module.i, "\n.siema {\n    overflow: hidden;\n}\n.siema-slide {\n    float: left;\n}\n", "", {"version":3,"sources":["/../src/Siema.vue?4bad0e40"],"names":[],"mappings":";AAkMA;IACA,iBAAA;CACA;AAEA;IACA,YAAA;CACA","file":"Siema.vue","sourcesContent":["<template>\r\n    <div class=\"siema\" ref=\"wrap\"\r\n         @mouseleave=\"mouseleaveHandler\"\r\n         @mouseup=\"mouseupHandler\"\r\n         @mousedown=\"mousedownHandler\"\r\n         @mousemove=\"mousemoveHandler\"\r\n         @touchstart=\"touchstartHandler\"\r\n         @touchend=\"touchendHandler\"\r\n         @touchmove=\"touchmoveHandler\">\r\n        <div class=\"inner-siema\" :style=\"styleObject\">\r\n            <div class=\"siema-slide\" :class=\"{'active': index === currentSlide}\"  v-for=\"(slide,index) in slides\" v-html=\"slide\"\r\n                 :style=\"slideStyle\"></div>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n  import MouseHandlers from './mixins/mouseHandler'\r\n  import TouchHandlers from './mixins/touchHandler'\r\n  export default {\r\n    mixins: [MouseHandlers, TouchHandlers],\r\n    name: 'siema-slider',\r\n    computed: {\r\n      slideStyle () {\r\n        return {\r\n          float: 'left',\r\n          cssFloat: 'left',\r\n          width: `${100 / this.slides.length}%`\r\n        }\r\n      }\r\n    },\r\n\r\n    props: {\r\n      duration: {\r\n        type: Number,\r\n        default: 200\r\n      },\r\n      slides: {\r\n        type: Array,\r\n        required: true\r\n      },\r\n      easing: {\r\n        type: String,\r\n        default: 'ease-out'\r\n      },\r\n      perPage: {\r\n        type: Number,\r\n        default: 1\r\n      },\r\n      // Todo: find a beter name\r\n      restartSliderAfterAdd: {\r\n        type: Boolean,\r\n        default: false\r\n      },\r\n\r\n      startIndex: {\r\n        type: Number,\r\n        default: 0\r\n      },\r\n      draggable: {\r\n        type: Boolean,\r\n        default: false\r\n      },\r\n      direction: {\r\n        type: String,\r\n        default: 'ltr'\r\n      },\r\n      threshold: {\r\n        type: Number,\r\n        default: 20\r\n      },\r\n      loop: {\r\n        type: Boolean,\r\n        default: true\r\n      }\r\n    },\r\n\r\n    data () {\r\n      return {\r\n        styleObject: {\r\n          transform: 'none'\r\n        },\r\n        width: 0,\r\n        currentSlide: 0,\r\n        pointerDown: false,\r\n        drag: {\r\n          start: 0,\r\n          end: 0\r\n        }\r\n      }\r\n    },\r\n\r\n    mounted () {\r\n      // Todo: Debounce\r\n      if (this.draggable) {\r\n        this.pointerDown = false\r\n        this.drag.start = 0\r\n        this.drag.end = 0\r\n      }\r\n      // Fire\r\n      this.init()\r\n     // window.addEventListener('resize', this.resize)\r\n    },\r\n\r\n    methods: {\r\n\r\n      init () {\r\n        const siemaWidth = this.$refs.wrap.getBoundingClientRect().width\r\n        this.styleObject = Object.assign({}, this.styleObject, {\r\n          width: `${(siemaWidth / this.perPage) * this.slides.length}px`, // The Container width\r\n          transition: `all ${this.duration}ms ${this.easing}`,\r\n          webkitTransition: `all ${this.duration}ms ${this.easing}`,\r\n          cursor: '-webkit-grab'\r\n        })\r\n\r\n        this.width = siemaWidth\r\n      },\r\n      clearDrag () {\r\n        this.drag = {\r\n          start: 0,\r\n          end: 0\r\n        }\r\n      },\r\n\r\n      updateAfterDrag () {\r\n        const movement = this.drag.end - this.drag.start\r\n        if (movement > 0 && Math.abs(movement) > this.threshold) {\r\n          this.prev()\r\n        } else if (movement < 0 && Math.abs(movement) > this.threshold) {\r\n          this.next()\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n      next () {\r\n        if (this.currentSlide === this.slides.length - this.perPage && this.loop) {\r\n          this.currentSlide = 0\r\n        } else {\r\n          this.currentSlide = Math.min(this.currentSlide + 1, this.slides.length - this.perPage)\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      prev () {\r\n        if (this.currentSlide === 0 && this.loop) {\r\n          this.currentSlide = this.slides.length - this.perPage\r\n        } else {\r\n          this.currentSlide = Math.max(this.currentSlide - 1, 0)\r\n        }\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      slideToCurrent () {\r\n        this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`\r\n      },\r\n\r\n      resize () {\r\n        var siemaWidth = this.$refs.wrap.getBoundingClientRect().width\r\n        this.styleObject.width = `${(siemaWidth / this.perPage) * this.slides.length}px`\r\n        this.width = siemaWidth\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      // Public\r\n\r\n      goTo (index) {\r\n        this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1)\r\n        this.slideToCurrent()\r\n      },\r\n\r\n      beforeDestroy () {\r\n        window.removeEventListener('resize', this.resize)\r\n      }\r\n    },\r\n    watch: {\r\n      'currentSlide' (newVal, oldVal) {\r\n        // Todo: maybe save this in data for simpler reuse\r\n\r\n        var callbackValues = {\r\n          currentSlide: newVal,\r\n          isFirst: newVal === 0,\r\n          isLast: newVal + 1 === this.slides.length\r\n        }\r\n        this.$emit('slideChange', callbackValues)\r\n      },\r\n      // Reinit the slider after new slides comes in\r\n      'slides' (newVal, oldVal) {\r\n        this.init()\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n\r\n    .siema {\r\n        overflow: hidden;\r\n    }\r\n\r\n    .siema-slide {\r\n        float: left;\r\n    }\r\n</style>"],"sourceRoot":"webpack://"}]);
-
-// exports
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(0)();
-// imports
-
-
-// module
-exports.push([module.i, "\nhtml {\n  font-size: 16px;\n}\nbody {\n  width: 100%;\n  max-width: 37.5rem;\n  margin: 0 auto;\n}\nimg {\n  max-width: 100%;\n  display: block;\n}\n", "", {"version":3,"sources":["/./App.vue?aef3ec52"],"names":[],"mappings":";AAgEA;EACA,gBAAA;CACA;AACA;EACA,YAAA;EACA,mBAAA;EACA,eAAA;CACA;AACA;EACA,gBAAA;EACA,eAAA;CACA","file":"App.vue","sourcesContent":["<template>\r\n  <div id=\"app\" class=\"component\">\r\n    <Siema ref=\"slider\" :slides=\"slides\" @slideChange=\"slideChanged\">\r\n    </Siema>\r\n    <div class=\"controls\">\r\n      Current Slide:\r\n      <pre> {{currentSlide}} </pre>\r\n      <div class=\"buttons\">\r\n        <button type=\"button\" @click=\"prev\">Prev</button>\r\n        <button type=\"button\" @click=\"next\">Next</button>\r\n        <br>\r\n        <button type=\"button\" @click=\"addSlide\">Add New Slide</button>\r\n      </div>\r\n    </div>\r\n    <input type=\"number\" v-model=\"sliderIndex\">\r\n    <button class=\"btn\" @click=\"goTo(sliderIndex)\">Go To</button>\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n  import Siema from '../src/index'\r\n  export default {\r\n    name: 'app',\r\n    components: {\r\n      Siema\r\n    },\r\n    data () {\r\n      return {\r\n        currentSlide: 0,\r\n        sliderIndex: 2,\r\n        slides: [\r\n          '<img src=\"https://unsplash.it/600/350?image=10\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=12\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=13\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=14\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=15\" alt=\"slide\">',\r\n          '<img src=\"https://unsplash.it/600/350?image=16\" alt=\"slide\">'\r\n        ]\r\n      }\r\n    },\r\n    methods: {\r\n      goTo () {\r\n        this.$refs.slider.goTo(this.sliderIndex)\r\n      },\r\n      // Events\r\n      slideChanged (val) {\r\n        this.currentSlide = val\r\n      },\r\n      // Controls\r\n      prev () {\r\n        this.$refs.slider.prev()\r\n      },\r\n      next () {\r\n        this.$refs.slider.next()\r\n      },\r\n      addSlide () {\r\n        const number = Math.floor((Math.random() * 80) + 1)\r\n        this.slides.push(`<img src=\"https://unsplash.it/600/350?image=${number}\" alt=\"slide\">`)\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n  html {\r\n    font-size: 16px;\r\n  }\r\n  body {\r\n    width: 100%;\r\n    max-width: 37.5rem;\r\n    margin: 0 auto;\r\n  }\r\n  img {\r\n    max-width: 100%;\r\n    display: block;\r\n  }\r\n</style>"],"sourceRoot":"webpack://"}]);
-
-// exports
-
-
-/***/ },
-/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = {}
 
-/* styles */
-__webpack_require__(15)
-
 /* script */
-__vue_exports__ = __webpack_require__(6)
+__vue_exports__ = __webpack_require__(4)
 
 /* template */
-var __vue_template__ = __webpack_require__(13)
+var __vue_template__ = __webpack_require__(11)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -7153,13 +6936,16 @@ module.exports = __vue_exports__
 
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
+  return (_vm.draggable) ? _c('div', {
     ref: "wrap",
     staticClass: "siema",
+    staticStyle: {
+      "overflow": "hidden"
+    },
     on: {
       "mouseleave": _vm.mouseleaveHandler,
       "mouseup": _vm.mouseupHandler,
@@ -7168,6 +6954,26 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "touchstart": _vm.touchstartHandler,
       "touchend": _vm.touchendHandler,
       "touchmove": _vm.touchmoveHandler
+    }
+  }, [_c('div', {
+    staticClass: "inner-siema",
+    style: (_vm.styleObject)
+  }, _vm._l((_vm.slides), function(slide, index) {
+    return _c('div', {
+      staticClass: "siema-slide",
+      class: {
+        'active': index === _vm.currentSlide
+      },
+      style: (_vm.slideStyle),
+      domProps: {
+        "innerHTML": _vm._s(slide)
+      }
+    })
+  }))]) : _c('div', {
+    ref: "wrap",
+    staticClass: "siema",
+    staticStyle: {
+      "overflow": "hidden"
     }
   }, [_c('div', {
     staticClass: "inner-siema",
@@ -7194,7 +7000,7 @@ if (false) {
 }
 
 /***/ },
-/* 14 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -7206,6 +7012,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('Siema', {
     ref: "slider",
     attrs: {
+      "loop": _vm.loop,
+      "startIndex": _vm.currentSlide,
       "slides": _vm.slides
     },
     on: {
@@ -7213,18 +7021,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }), _vm._v(" "), _c('div', {
     staticClass: "controls"
-  }, [_vm._v("\n    Current Slide:\n    "), _c('pre', [_vm._v(" " + _vm._s(_vm.currentSlide) + " ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n        Current Slide:\n        "), _c('pre', [_vm._v(" " + _vm._s(_vm.currentSlide) + " ")]), _vm._v(" "), _c('div', {
     staticClass: "buttons"
   }, [_c('button', {
     attrs: {
-      "type": "button"
+      "type": "button",
+      "disabled": _vm.buttons.prev
     },
     on: {
       "click": _vm.prev
     }
   }, [_vm._v("Prev")]), _vm._v(" "), _c('button', {
     attrs: {
-      "type": "button"
+      "type": "button",
+      "disabled": _vm.buttons.next
     },
     on: {
       "click": _vm.next
@@ -7276,42 +7086,238 @@ if (false) {
 }
 
 /***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/* 13 */
+/***/ function(module, exports) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+var stylesInDom = {},
+	memoize = function(fn) {
+		var memo;
+		return function () {
+			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+			return memo;
+		};
+	},
+	isOldIE = memoize(function() {
+		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+	}),
+	getHeadElement = memoize(function () {
+		return document.head || document.getElementsByTagName("head")[0];
+	}),
+	singletonElement = null,
+	singletonCounter = 0,
+	styleElementsInsertedAtTop = [];
 
-// load the styles
-var content = __webpack_require__(10);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(2)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!./../node_modules/css-loader/index.js?sourceMap!./../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-06f4dc9b!./../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Siema.vue", function() {
-			var newContent = require("!!./../node_modules/css-loader/index.js?sourceMap!./../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-06f4dc9b!./../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Siema.vue");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
+module.exports = function(list, options) {
+	if(typeof DEBUG !== "undefined" && DEBUG) {
+		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
 	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
+
+	options = options || {};
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the bottom of <head>.
+	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+	var styles = listToStyles(list);
+	addStylesToDom(styles, options);
+
+	return function update(newList) {
+		var mayRemove = [];
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+		if(newList) {
+			var newStyles = listToStyles(newList);
+			addStylesToDom(newStyles, options);
+		}
+		for(var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+			if(domStyle.refs === 0) {
+				for(var j = 0; j < domStyle.parts.length; j++)
+					domStyle.parts[j]();
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
 }
 
+function addStylesToDom(styles, options) {
+	for(var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+		if(domStyle) {
+			domStyle.refs++;
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles(list) {
+	var styles = [];
+	var newStyles = {};
+	for(var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+		if(!newStyles[id])
+			styles.push(newStyles[id] = {id: id, parts: [part]});
+		else
+			newStyles[id].parts.push(part);
+	}
+	return styles;
+}
+
+function insertStyleElement(options, styleElement) {
+	var head = getHeadElement();
+	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+	if (options.insertAt === "top") {
+		if(!lastStyleElementInsertedAtTop) {
+			head.insertBefore(styleElement, head.firstChild);
+		} else if(lastStyleElementInsertedAtTop.nextSibling) {
+			head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			head.appendChild(styleElement);
+		}
+		styleElementsInsertedAtTop.push(styleElement);
+	} else if (options.insertAt === "bottom") {
+		head.appendChild(styleElement);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement(styleElement) {
+	styleElement.parentNode.removeChild(styleElement);
+	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+	if(idx >= 0) {
+		styleElementsInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement(options) {
+	var styleElement = document.createElement("style");
+	styleElement.type = "text/css";
+	insertStyleElement(options, styleElement);
+	return styleElement;
+}
+
+function addStyle(obj, options) {
+	var styleElement, update, remove;
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+		styleElement = singletonElement || (singletonElement = createStyleElement(options));
+		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+	} else {
+		styleElement = createStyleElement(options);
+		update = applyToTag.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle(newObj) {
+		if(newObj) {
+			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+				return;
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag(styleElement, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = styleElement.childNodes;
+		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+		if (childNodes.length) {
+			styleElement.insertBefore(cssNode, childNodes[index]);
+		} else {
+			styleElement.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag(styleElement, obj) {
+	var css = obj.css;
+	var media = obj.media;
+	var sourceMap = obj.sourceMap;
+
+	if (media) {
+		styleElement.setAttribute("media", media);
+	}
+
+	if (sourceMap) {
+		// https://developer.chrome.com/devtools/docs/javascript-debugging
+		// this makes source maps inside style tags work properly in Chrome
+		css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */';
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = css;
+	} else {
+		while(styleElement.firstChild) {
+			styleElement.removeChild(styleElement.firstChild);
+		}
+		styleElement.appendChild(document.createTextNode(css));
+	}
+}
+
+
 /***/ },
-/* 16 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(11);
+var content = __webpack_require__(8);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(2)(content, {});
+var update = __webpack_require__(13)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -7328,7 +7334,7 @@ if(false) {
 }
 
 /***/ },
-/* 17 */
+/* 15 */
 /***/ function(module, exports) {
 
 var g;
@@ -7353,13 +7359,13 @@ module.exports = g;
 
 
 /***/ },
-/* 18 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__App__);
 
 

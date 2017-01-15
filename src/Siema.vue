@@ -13,12 +13,15 @@
                  :style="slideStyle"></div>
         </div>
     </div>
-
+    <!-- No DraggHandler -->
     <div class="siema" v-else style="overflow:hidden" ref="wrap">
         <div class="inner-siema" :style="styleObject">
-            <div class="siema-slide" :class="{'active': index === currentSlide}" v-for="(slide,index) in slides"
+            <div class="siema-slide"
+                 :class="{'active': index === currentSlide}"
+                 v-for="(slide,index) in slides"
                  v-html="slide"
-                 :style="slideStyle"></div>
+                 :style="slideStyle">
+            </div>
         </div>
     </div>
 
@@ -27,7 +30,7 @@
 <script>
   import MouseHandlers from './mixins/mouseHandler'
   import TouchHandlers from './mixins/touchHandler'
-
+  import debounce from 'lodash.debounce'
   export default {
     mixins: [MouseHandlers, TouchHandlers],
     name: 'siema-slider',
@@ -38,6 +41,9 @@
           cssFloat: 'left',
           width: `${100 / this.slides.length}%`
         }
+      },
+      transition () {
+        return `all ${this.duration}ms ${this.easing}`
       }
     },
 
@@ -98,11 +104,12 @@
           start: 0,
           end: 0
         }
-      }
+      }//
     },
 
     mounted () {
       // Todo: Debounce
+
       if (this.draggable) {
         this.pointerDown = false
         this.drag.start = 0
@@ -110,25 +117,29 @@
       }
       // Fire
       this.init()
-      // window.addEventListener('resize', this.resize)
     },
 
+    created() {
+      window.addEventListener('resize', this.resize)
+
+    },
     methods: {
 
       init () {
         const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
-        this.styleObject = Object.assign({}, this.styleObject, {
-          width: `${(siemaWidth / this.perPage) * this.slides.length}px`, // The Container width
-          transition: `all ${this.duration}ms ${this.easing}`,
-          webkitTransition: `all ${this.duration}ms ${this.easing}`,
-          cursor: '-webkit-grab'
-        })
 
+        const styleToMerge = {
+          width: `${(siemaWidth / this.perPage) * this.slides.length}px`, // The Container width
+          transition: this.transition,
+          webkitTransition: this.transition,
+          cursor: '-webkit-grab'
+        }
+
+        this.styleObject = Object.assign({}, this.styleObject, styleToMerge)
         this.currentSlide = this.startIndex
         this.width = siemaWidth
         this.$emit('slideChange', this.currentSlide)
         this.slideToCurrent()
-
       },
       clearDrag () {
         this.drag = {
@@ -137,7 +148,8 @@
         }
       },
 
-      updateAfterDrag () {
+      updateAfterDrag ()
+      {
         const movement = this.drag.end - this.drag.start
         if (movement > 0 && Math.abs(movement) > this.threshold) {
           this.prev()
@@ -165,15 +177,22 @@
       },
 
       slideToCurrent () {
+        if (this.newSlide) {
+          this.styleObject.transition = this.transition
+          this.styleObject.webkitTransition = this.transition
+          this.newSlide = false
+        }
+
         this.styleObject.transform = `translate3d(-${this.currentSlide * (this.width / this.perPage)}px, 0, 0)`
       },
 
-      resize () {
+      resize: debounce(function () {
         var siemaWidth = this.$refs.wrap.getBoundingClientRect().width
+        console.log(siemaWidth);
         this.styleObject.width = `${(siemaWidth / this.perPage) * this.slides.length}px`
         this.width = siemaWidth
         this.slideToCurrent()
-      },
+      }, 250),
 
       // Public
 
@@ -187,15 +206,16 @@
       }
     },
     watch: {
-      'currentSlide' (newVal, oldVal) {
-        // Todo: maybe save this in data for simpler reuse
-
+      'currentSlide' (newVal, oldVal)
+      {
         this.$emit('slideChange', newVal)
       },
       // Reinit the slider after new slides comes in
-      'slides' (newVal, oldVal) {
-        this.init()
+      'slides' (newVal)
+      {
+
+        this.init(true)
       }
-    },
+    }
   }
 </script>

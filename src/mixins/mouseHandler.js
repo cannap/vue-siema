@@ -1,13 +1,10 @@
 var mouseHandlers = {
   methods: {
     mousedownHandler: function (e) {
-      e.preventDefault()
-      e.stopPropagation()
       this.pointerDown = true
       this.drag.start = e.pageX
     },
     mouseupHandler: function (e) {
-      e.stopPropagation()
       this.pointerDown = false
       this.styleObject.cursor = '-webkit-grab'
       this.styleObject.transition = `all ${this.duration}ms ${this.easing}`
@@ -18,7 +15,6 @@ var mouseHandlers = {
       this.clearDrag()
     },
     mousemoveHandler: function (e) {
-      e.preventDefault()
       if (this.pointerDown) {
         this.drag.end = e.pageX
         this.styleObject.cursor = '-webkit-grabbing'

@@ -1,12 +1,12 @@
 <template>
     <div class="siema" v-if="draggable" style="overflow:hidden" ref="wrap"
          @mouseleave="mouseleaveHandler"
-         @mouseup="mouseupHandler"
-         @mousedown="mousedownHandler"
-         @mousemove="mousemoveHandler"
-         @touchstart="touchstartHandler"
-         @touchend="touchendHandler"
-         @touchmove="touchmoveHandler">
+         @mouseup.stop="mouseupHandler"
+         @mousedown.stop.prevent="mousedownHandler"
+         @mousemove.prevent="mousemoveHandler"
+         @touchstart.stop="touchstartHandler"
+         @touchend.stop="touchendHandler"
+         @touchmove.stop="touchmoveHandler">
         <div class="inner-siema" :style="styleObject">
             <div class="siema-slide" :class="{'active': index === currentSlide}" v-for="(slide,index) in slides"
                  v-html="slide"

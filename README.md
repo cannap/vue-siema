@@ -72,3 +72,4 @@ This project is based on https://github.com/pawelgrzybek/siema
 - [ ] Events
 - [ ] SSR compatibility (check)
 - [x] Pagination(example)
+- [ ] Manual initialize via ref and disable in options when some async content comes and must wait

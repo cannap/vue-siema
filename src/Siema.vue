@@ -198,9 +198,11 @@
         this.slideToCurrent()
       },
 
-      beforeDestroy () {
-        window.removeEventListener('resize', this.resize)
-      }
+
+    },
+
+    beforeDestroy () {
+      window.removeEventListener('resize', this.resize)
     },
     watch: {
       'currentSlide' (newVal, oldVal)

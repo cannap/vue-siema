@@ -117,11 +117,10 @@
       this.init()
     },
 
-    created() {
+    created () {
       window.addEventListener('resize', this.resize)
     },
     methods: {
-
       init () {
         const siemaWidth = this.$refs.wrap.getBoundingClientRect().width
 
@@ -185,7 +184,6 @@
 
       resize: debounce(function () {
         var siemaWidth = this.$refs.wrap.getBoundingClientRect().width
-        console.log(siemaWidth);
         this.styleObject.width = `${(siemaWidth / this.perPage) * this.slides.length}px`
         this.width = siemaWidth
         this.slideToCurrent()
@@ -196,25 +194,21 @@
       goTo (index) {
         this.currentSlide = Math.min(Math.max(index, 0), this.slides.length - 1)
         this.slideToCurrent()
-      },
-
-
+      }
     },
 
-    beforeDestroy () {
-      window.removeEventListener('resize', this.resize)
-    },
     watch: {
       'currentSlide' (newVal, oldVal)
       {
         this.$emit('slideChange', newVal)
       },
       // Reinit the slider after new slides comes in
-      'slides' (newVal)
-      {
-
+      'slides' (newVal) {
         this.init(true)
       }
-    }
+    },
+    beforeDestroy () {
+      window.removeEventListener('resize', this.resize)
+    },
   }
 </script>

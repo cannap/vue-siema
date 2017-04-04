@@ -1,5 +1,5 @@
 
-##WIP !!!
+## WIP !!!
 
 Watch progress on liveedu.tv: [📺🎥 Click 🍿](https://www.liveedu.tv/cannap/) 
 
@@ -10,10 +10,11 @@ This project is based on https://github.com/pawelgrzybek/siema
 
 🚀🚀🚀Example: https://cannap.github.io/vue-siema/
 
-##Install 
+## Install 
 ```npm install --save vue-siema```
 
-##Props 
+## Props
+
 | Prop       | Type    | Default    | Required |
 |------------|---------|------------|----------|
 | duration   | Number  | 200        | false    |
@@ -32,7 +33,7 @@ This project is based on https://github.com/pawelgrzybek/siema
 | @slideChange | Init / Slide changed | currentIndex |
 
 
-##Usage 
+## Usage 
 ```html
 <template>
     <div class="slider">
@@ -66,7 +67,7 @@ This project is based on https://github.com/pawelgrzybek/siema
    </script>
 ```
 
-##Todo:
+## Todo:
 - [x] Touch Stuff
 - [ ] Dynamically adding/remove Slides
 - [ ] Events
